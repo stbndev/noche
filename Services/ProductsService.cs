@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using noche.Models;
+using noche.Config;
 
 namespace noche.Services
 {
     public class ProductsService
     {
         private readonly IMongoCollection<Products> _products;
+        private readonly IMongoDatabase _db = null;
+
 
         public ProductsService(DBSettings settings)
         {
@@ -28,15 +32,19 @@ namespace noche.Services
     public class ProductContext
     {
         private readonly IMongoDatabase _db = null;
+        private readonly IOptions<Mongosettings> _mongosettings;
 
-        public ProductContext(IOptions<Settings> settings)
+        IConfiguration configuration;
+
+
+        public ProductContext(IOptions<Mongosettings> settings)
         {
-            //var client = new MongoClient(settings.Value.ConnectionString);
-            //if (client != null)
-            //    _db = client.GetDatabase(settings.Value.Database);
-            var client = new MongoClient("mongodb+srv://dbuser:develop3r@cluster0-pd5jd.gcp.mongodb.net/test?retryWrites=true&w=majority");
+
+            _mongosettings = settings;
+            
+            var client = new MongoClient(_mongosettings.Value.ConnectionString);
             if (client != null)
-                _db = client.GetDatabase("mrgvndb");
+                _db = client.GetDatabase(_mongosettings.Value.DatabaseName);
 
         }
 
@@ -58,7 +66,7 @@ namespace noche.Services
     {
         private readonly ProductContext _context = null;
 
-        public ProductRepository(IOptions<Settings> settings)
+        public ProductRepository(IOptions<Mongosettings> settings)
         {
             _context = new ProductContext(settings);
         }
