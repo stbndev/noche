@@ -14,6 +14,7 @@ using Microsoft.Extensions.Options;
 using noche.Models;
 using noche.Services;
 using noche.Config;
+using noche.Repository;
 
 namespace noche
 {
@@ -31,11 +32,12 @@ namespace noche
         {
             
 
-            services.AddMvc();
+            //services.AddMvc();
             //start
             // Add functionality to inject IOptions<T>
             services.Configure<Mongosettings>(Configuration.GetSection("Mongosettings"));
-            services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddTransient<IProductRepository, ProductsRepository>();
+            services.AddTransient<ICstatus, CstatusRepository>();
             // end
             services.AddControllers();
         }

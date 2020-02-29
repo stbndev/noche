@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using noche.Models;
-using noche.Services;
+using noche.Context;
+using noche.Repository;
 
 namespace noche.Controllers
 {
@@ -13,7 +13,7 @@ namespace noche.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly ProductsService _productService;
+        //private readonly ProductsService _productService;
         private readonly IProductRepository _repository;
 
         public ProductsController(IProductRepository productRepository)

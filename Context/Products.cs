@@ -1,11 +1,11 @@
-﻿using System;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
 
-namespace noche.Models
+namespace noche.Context
 {
     public class Products
     {
@@ -26,7 +26,7 @@ namespace noche.Models
         public decimal unitary_price { get; set; }
         [BsonRequired]
         public decimal existence { get; set; }
-        
+
         public string pathimg { get; set; }
 
         [BsonRequired]
@@ -41,6 +41,5 @@ namespace noche.Models
         public int date_add { get; set; }
         [BsonDefaultValue(0)]
         public int date_set { get; set; }
-
     }
 }
