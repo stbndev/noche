@@ -29,5 +29,12 @@ namespace noche.Controllers
             return await _repository.GetAll();
         }
 
+        [HttpGet("{id}", Name = "ProductsGet")]
+        //[HttpGet("{id}")]
+        public async Task<Products> Read(int id)
+        {
+            return await _repository.Read(id);
+        }
+
     }
 }

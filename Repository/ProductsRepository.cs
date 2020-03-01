@@ -11,11 +11,12 @@ namespace noche.Repository
     public interface IProductRepository
     {
         Task<IEnumerable<Products>> GetAll();
+        Task<Products> Read(int sequence_value);
     }
     public class ProductsRepository : IProductRepository
     {
         private readonly MongoContext _context = null;
-        public ProductsRepository(IOptions<Mongosettings> settings) 
+        public ProductsRepository(IOptions<Mongosettings> settings)
         {
             _context = new MongoContext(settings);
         }
@@ -24,6 +25,18 @@ namespace noche.Repository
             try
             {
                 return await _context.Products.Find(_ => true).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<Products> Read(int sequence_value)
+        {
+            try
+            {
+                return await _context.Products.Find(x => x.sequence_value == sequence_value).FirstAsync<Products>();
             }
             catch (Exception ex)
             {

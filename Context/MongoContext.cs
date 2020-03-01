@@ -14,7 +14,7 @@ namespace noche.Context
         private readonly IMongoDatabase _db = null;
         private readonly IOptions<Mongosettings> _mongosettings;
 
-        IConfiguration configuration;
+        //IConfiguration configuration;
 
 
         public MongoContext(IOptions<Mongosettings> settings)
@@ -42,5 +42,50 @@ namespace noche.Context
                 return _db.GetCollection<Products>("products");
             }
         }
+        public IMongoCollection<ProductEntries> ProductEntries
+        {
+            get
+            {
+                return _db.GetCollection<ProductEntries>("productsentries");
+            }
+        }
+        public IMongoCollection<ProductEntryDetails> ProductEntryDetails
+        {
+            get
+            {
+                return _db.GetCollection<ProductEntryDetails>("productsentrydetails");
+            }
+        }
+
+        public IMongoCollection<Sales> Sales
+        {
+            get
+            {
+                return _db.GetCollection<Sales>("sales");
+            }
+        }
+        public IMongoCollection<SalesDetails> SalesDetails
+        {
+            get
+            {
+                return _db.GetCollection<SalesDetails>("salesdetails");
+            }
+        }
+        public IMongoCollection<Shrinkage> Shrinkage
+        {
+            get
+            {
+                return _db.GetCollection<Shrinkage>("shrinkage");
+            }
+        }
+
+        public IMongoCollection<ShrinkageDetails> ShrinkageDetails
+        {
+            get
+            {
+                return _db.GetCollection<ShrinkageDetails>("shrinkagedetails");
+            }
+        }
+
     }
 }
