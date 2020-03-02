@@ -22,18 +22,22 @@ namespace noche.Controllers
         }
 
         [HttpGet]
-        //public ActionResult<List<Products>> Get() =>
-        //    _productService.Get();
         public async Task<IEnumerable<Products>> Get()
         {
             return await _repository.GetAll();
         }
 
-        [HttpGet("{id}", Name = "ProductsGet")]
+        //[HttpGet("{id}",Name = "ProductsGet")]
+        [HttpGet("{id}")]
         //[HttpGet("{id}")]
         public async Task<Products> Read(int id)
         {
             return await _repository.Read(id);
+        }
+        [HttpPost]
+        public async Task<Products> Update() 
+        {
+            
         }
 
     }
