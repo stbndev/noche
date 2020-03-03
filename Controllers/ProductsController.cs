@@ -28,17 +28,18 @@ namespace noche.Controllers
         }
 
         //[HttpGet("{id}",Name = "ProductsGet")]
+        [HttpPost]
+        public async Task<Products> Create(Products products)
+        {
+            return await _repository.Create(products);
+        }
         [HttpGet("{id}")]
         //[HttpGet("{id}")]
         public async Task<Products> Read(int id)
         {
             return await _repository.Read(id);
         }
-        [HttpPost]
-        public async Task<Products> Update() 
-        {
-            
-        }
+        
 
     }
 }

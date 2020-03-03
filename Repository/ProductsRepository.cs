@@ -11,6 +11,7 @@ namespace noche.Repository
     public interface IProductRepository
     {
         Task<IEnumerable<Products>> GetAll();
+        Task<Products> Create(Products products);
         Task<Products> Read(int sequence_value);
     }
     public class ProductsRepository : IProductRepository
@@ -31,7 +32,20 @@ namespace noche.Repository
                 throw ex;
             }
         }
+        public async Task<Products> Create(Products products)
+        {
+            try
+            {
+                _context.Products.InsertOneAsync(products).Wait();
+                return products;
+            }
+            catch (Exception ex)
+            {
 
+                throw ex;
+            }
+
+        }
         public async Task<Products> Read(int sequence_value)
         {
             try
@@ -43,5 +57,19 @@ namespace noche.Repository
                 throw ex;
             }
         }
+        public async Task<Products> Update(Products products)
+        {
+            try
+            {
+                return _context.Products.FindOneAndReplace(products);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
+
+
     }
 }
