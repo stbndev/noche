@@ -10,8 +10,11 @@ namespace noche.Repository
 {
     public interface IProductRepository
     {
+        Task<bool> Create(Products products);
         Task<IEnumerable<Products>> GetAll();
         Task<Products> Read(int sequence_value);
+
+
     }
     public class ProductsRepository : IProductRepository
     {
@@ -20,6 +23,21 @@ namespace noche.Repository
         {
             _context = new MongoContext(settings);
         }
+
+        public async Task<bool> Create(Products products)
+        {
+            try
+            {
+                await _context.Products.InsertOneAsync(products);
+                return true;
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public async Task<IEnumerable<Products>> GetAll()
         {
             try
