@@ -43,6 +43,7 @@ namespace noche.Repository
         {
             try
             {
+                var data = _context.find("products", "{}");
                 return await _context.Products.Find(_ => true).ToListAsync();
             }
             catch (Exception ex)
@@ -54,6 +55,7 @@ namespace noche.Repository
         {
             try
             {
+                var data = _context.find("products", "{}");
                 _context.Products.InsertOneAsync(products).Wait();
                 return true;
             }

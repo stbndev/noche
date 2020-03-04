@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using noche.Config;
 using System;
@@ -28,6 +29,22 @@ namespace noche.Context
 
         }
 
+        public string find(string collectionName, string query)
+        {
+            var collection = _db.GetCollection<dynamic>(collectionName);
+            BsonDocument bsonDoc = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument>(query);
+            var result = collection.Find(new QueryDocument(bsonDoc));
+            if (result != null)
+            {
+                return result.ToJson();
+            }
+            else
+            {
+                return "{}";
+            }
+
+
+        }
         public IMongoCollection<Cstatus> Cstatus
         {
             get
@@ -87,10 +104,7 @@ namespace noche.Context
             }
         }
 
-        public int GetValueSequence(string collection_name) 
-        {
 
-        }
 
     }
 }
