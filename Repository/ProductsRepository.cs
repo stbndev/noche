@@ -12,7 +12,7 @@ namespace noche.Repository
     {
         Task<bool> Create(Products products);
         Task<IEnumerable<Products>> GetAll();
-        Task<Products> Create(Products products);
+        //Task<bool> Create(Products products);
         Task<Products> Read(int sequence_value);
 
 
@@ -25,19 +25,19 @@ namespace noche.Repository
             _context = new MongoContext(settings);
         }
 
-        public async Task<bool> Create(Products products)
-        {
-            try
-            {
-                await _context.Products.InsertOneAsync(products);
-                return true;
+        //public async Task<bool> Create(Products products)
+        //{
+        //    try
+        //    {
+        //        await _context.Products.InsertOneAsync(products);
+        //        return true;
 
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
 
         public async Task<IEnumerable<Products>> GetAll()
         {
@@ -50,12 +50,12 @@ namespace noche.Repository
                 throw ex;
             }
         }
-        public async Task<Products> Create(Products products)
+        public async Task<bool> Create(Products products)
         {
             try
             {
                 _context.Products.InsertOneAsync(products).Wait();
-                return products;
+                return true;
             }
             catch (Exception ex)
             {
@@ -79,7 +79,8 @@ namespace noche.Repository
         {
             try
             {
-                return _context.Products.FindOneAndReplace(products);
+                // _context.Products.FindOneAndReplace(products);
+                return null;
             }
             catch (Exception ex)
             {

@@ -87,5 +87,10 @@ namespace noche.Context
             }
         }
 
+        public int GetValueSequence(string collection_name) 
+        {
+
+        }
+
     }
 }
