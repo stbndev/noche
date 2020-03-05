@@ -44,6 +44,10 @@ namespace noche.Repository
             try
             {
                 var data = _context.find("products", "{}");
+                // b.collection.find().sort({age:-1}).limit(1) // for MAX
+                //_context.Products.Find(filter => filter.sequence_value).Limit(1);
+                _context.Products.Find(_ => true).Sort(_=> );
+
                 return await _context.Products.Find(_ => true).ToListAsync();
             }
             catch (Exception ex)
