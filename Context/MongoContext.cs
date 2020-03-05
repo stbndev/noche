@@ -29,22 +29,6 @@ namespace noche.Context
 
         }
 
-        public string find(string collectionName, string query)
-        {
-            var collection = _db.GetCollection<dynamic>(collectionName);
-            BsonDocument bsonDoc = MongoDB.Bson.Serialization.BsonSerializer.Deserialize<BsonDocument>(query);
-            var result = collection.Find(new QueryDocument(bsonDoc));
-            if (result != null)
-            {
-                return result.ToJson();
-            }
-            else
-            {
-                return "{}";
-            }
-
-
-        }
         public IMongoCollection<Cstatus> Cstatus
         {
             get
@@ -59,12 +43,16 @@ namespace noche.Context
                 return _db.GetCollection<Products>("products");
             }
         }
+
+        public int ProductsNext()
+        {
+            var collection = _db.GetCollection<Products>("products");
+            var result = (from c in collection.AsQueryable<Products>() select c.sequence_value).Max();
+            return result;
+        }
         public IMongoCollection<ProductEntries> ProductEntries
         {
-            get
-            {
-                return _db.GetCollection<ProductEntries>("productsentries");
-            }
+            get { return _db.GetCollection<ProductEntries>("productsentries"); }
         }
         public IMongoCollection<ProductEntryDetails> ProductEntryDetails
         {

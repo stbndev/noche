@@ -24,19 +24,20 @@ namespace noche.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Products>> Get()
+        //public async Task<IEnumerable<Products>> Get()
+        public async Task<ResponseModel> Get()
         {
-            return await _repository.GetAll();
+            return await executeactionAsync(Action.READALL);
         }
 
         //[HttpGet("{id}",Name = "ProductsGet")]
-             [HttpGet("{id}")]
+        [HttpGet("{id}")]
         //[HttpGet("{id}")]
         public async Task<Products> Read(int id)
         {
             return await _repository.Read(id);
         }
- 
+
         [HttpPost]
         public async Task<ResponseModel> Create(Products products)
         {
@@ -54,17 +55,15 @@ namespace noche.Controllers
                 {
                     case Action.CREATE:
                         rm.response = await _repository.Create(value);
+                        rm.result = value;
                         break;
                     case Action.READID:
                         //result = ng.Read(id: id).First();
                         break;
                     case Action.READALL:
-                        //var results = ng.Read(all: true);
-                        //// rm.result = results;
-                        //List<ProductDTO> p = Mapper.Map<List<ProductDTO>>(results);
-                        //rm.result = p;
-                        //rm.SetResponse(true);
-
+                        var list = await _repository.GetAll();
+                        rm.response = list.Count() > 0 ? true : false;
+                        rm.result = list;
                         break;
                     case Action.UPDATE:
                         //value.idproducts = id > 0 ? id : value.idproducts;
@@ -78,13 +77,7 @@ namespace noche.Controllers
                     default:
                         break;
                 }
-
-                if (!string.IsNullOrEmpty(result.Id))
-                {
-                    //ProductDTO p = Mapper.Map<ProductDTO>(result);
-                    rm.result = value;
-                    rm.SetResponse(true);
-                }
+                
             }
             catch (Exception ex)
             {

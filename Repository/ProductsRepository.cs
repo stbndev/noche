@@ -5,6 +5,7 @@ using noche.Context;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MongoDB.Driver.Linq;
 
 namespace noche.Repository
 {
@@ -43,11 +44,6 @@ namespace noche.Repository
         {
             try
             {
-                var data = _context.find("products", "{}");
-                // b.collection.find().sort({age:-1}).limit(1) // for MAX
-                //_context.Products.Find(filter => filter.sequence_value).Limit(1);
-                _context.Products.Find(_ => true).Sort(_=> );
-
                 return await _context.Products.Find(_ => true).ToListAsync();
             }
             catch (Exception ex)
@@ -59,22 +55,29 @@ namespace noche.Repository
         {
             try
             {
-                var data = _context.find("products", "{}");
+                int sequence_value = _context.ProductsNext();
+                products.sequence_value = ++sequence_value;
                 _context.Products.InsertOneAsync(products).Wait();
                 return true;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
 
         }
-        public async Task<Products> Read(int sequence_value)
+        public async Task<Products> Read(int sequence_value, string id = "")
         {
             try
             {
-                return await _context.Products.Find(x => x.sequence_value == sequence_value).FirstAsync<Products>();
+                if (string.IsNullOrEmpty(id))
+                {
+                    return await _context.Products.Find(x => x.sequence_value == sequence_value).FirstAsync<Products>();
+                }
+                else
+                {
+                    return await _context.Products.Find(x => x.Id == id).FirstAsync<Products>();
+                }
             }
             catch (Exception ex)
             {

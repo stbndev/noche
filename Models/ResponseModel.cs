@@ -16,7 +16,8 @@ namespace noche.Models
         public ResponseModel()
         {
             this.response = false;
-            this.message = "unexpected error";
+            // this.message = "unexpected error";
+            this.message = "";
         }
         public void SetResponse(bool r, string m = "")
         {
