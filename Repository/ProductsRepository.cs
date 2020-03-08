@@ -26,6 +26,7 @@ namespace noche.Repository
 
         public ProductsRepository(IOptions<Mongosettings> settings)
         {
+            _mongosettings = settings;
             _context = new MongoContext(settings);
         }
 
@@ -75,9 +76,20 @@ namespace noche.Repository
             }
         }
 
+        //Task<bool> Update(Products values)
+        //{
+        //    var userRepo = new MongoDbRepository<Products>(_mongosettings);
+        //    //userRepo.Save(new Products
+        //    //{
+        //    //    FirstName = "fn",
+        //    //    LastName = "ln"
+        //    //}).Wait();
+        //    userRepo.Save(values).Wait();
 
+        //    throw new NotImplementedException();
+        //}
 
-        Task<bool> IProductRepository.Update(Products values)
+        public async Task<bool> Update(Products values)
         {
             var userRepo = new MongoDbRepository<Products>(_mongosettings);
             //userRepo.Save(new Products
@@ -85,7 +97,7 @@ namespace noche.Repository
             //    FirstName = "fn",
             //    LastName = "ln"
             //}).Wait();
-             userRepo.Save(values).Wait();
+            userRepo.Save(values).Wait();
 
             throw new NotImplementedException();
         }

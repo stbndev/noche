@@ -43,6 +43,12 @@ namespace noche.Controllers
         {
             return await executeactionAsync(Action.CREATE, value: products);
         }
+
+        [HttpPut]
+        public async Task<ResponseModel> Update(Products products)
+        {
+            return await executeactionAsync(Action.UPDATE, value: products);
+        }
         private async Task<ResponseModel> executeactionAsync(Action action, int id = 0, Products value = null)
         {
             ResponseModel rm = new ResponseModel();
@@ -66,6 +72,8 @@ namespace noche.Controllers
                         rm.result = list;
                         break;
                     case Action.UPDATE:
+                         await _repository.Update(value);
+
                         //value.idproducts = id > 0 ? id : value.idproducts;
                         //result = ng.Update(value);
                         //rm.SetResponse(true);
