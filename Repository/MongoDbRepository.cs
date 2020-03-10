@@ -10,7 +10,8 @@ namespace noche.Repository
     public class EntityBase
     {
         [BsonId]
-        public ObjectId Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
 
         [BsonRequired]
         [BsonDefaultValue(0)]

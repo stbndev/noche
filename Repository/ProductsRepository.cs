@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Builders;
 using MongoDB.Driver.Linq;
 using noche.Config;
 using noche.Context;
@@ -91,15 +93,27 @@ namespace noche.Repository
 
         public async Task<bool> Update(Products values)
         {
-            var userRepo = new MongoDbRepository<Products>(_mongosettings);
-            //userRepo.Save(new Products
-            //{
-            //    FirstName = "fn",
-            //    LastName = "ln"
-            //}).Wait();
-            userRepo.Save(values).Wait();
+            try
+            {
 
-            throw new NotImplementedException();
+                //var filter = Builders<Products>.Filter.Eq(s => s.Id, values.Id);
+                var update = Builders<Products>.Update
+                //.Set("cuisine", "American (New)")
+                .Set(x => x.pathimg, values.pathimg)
+                .Set(x => x.maker, values.maker);
+                //var result = await _fileRepository.UpdateOneAsync(fileId, update);
+
+                var filter = Builders<Products>.Filter.Eq(s => s.sequence_value, values.sequence_value);
+
+                var result = await _context.Products.UpdateOneAsync(filter, update);
+
+                //var result = await _context.Products.ReplaceOneAsync(filter, values);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

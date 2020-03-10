@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Builders;
 using noche.Config;
 using System;
 using System.Collections.Generic;
@@ -49,6 +50,27 @@ namespace noche.Context
             var collection = _db.GetCollection<Products>("products");
             var result = (from c in collection.AsQueryable<Products>() select c.sequence_value).Max();
             return result;
+        }
+
+        public void ProductsSet()
+        {
+
+
+            //var Collection_ = _db.GetCollection<Products>("products");
+            //IMongoQuery Marker = Query.EQ("sequence_value", "2");
+
+            //IMongoUpdate Update_ = MongoDB.Driver.Builders.Update.Set("barcode", "0123456")
+            //     .Set("maker", "hardcode")
+            //     .Set("date_set", "31416");
+            //Collection_.Update(Marker, Update_);
+
+            //// end
+            //var collection = _db.GetCollection<Products>("products");
+            //var result = (from c in collection.AsQueryable<Products>() select c.sequence_value).Max();
+            //return result;
+
+
+
         }
         public IMongoCollection<ProductEntries> ProductEntries
         {
