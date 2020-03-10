@@ -107,6 +107,10 @@ namespace noche.Repository
 
                 var result = await _context.Products.UpdateOneAsync(filter, update);
 
+                var delete_result = await _context.Products.DeleteOneAsync(filter);
+
+                await _context.Products.InsertOneAsync(values);
+
                 //var result = await _context.Products.ReplaceOneAsync(filter, values);
                 return true;
             }

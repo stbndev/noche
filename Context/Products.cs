@@ -21,6 +21,8 @@ namespace noche.Context
         
         public string pathimg { get; set; }
 
+        [BsonRequired]
+        public int idcstatus { get; set; }
 
         public decimal unitary_price { get; set; }
 
