@@ -13,8 +13,12 @@ namespace noche.Repository
 {
     public interface IProductRepository
     {
-        Task<bool> Update(Products values);
-        Task<Products> Read(int sequence_value, string id = "");
+        //Physical
+        Task<bool> DeletePhysical(string id);
+        Task<bool> Delete(string id);
+
+        Task<Products> Update(Products values);
+        Task<Products> Read(string id);
         Task<bool> Create(Products products);
         Task<IEnumerable<Products>> GetAll();
         //Task<bool> Create(Products products);
@@ -49,6 +53,7 @@ namespace noche.Repository
             {
                 int sequence_value = _context.ProductsNext();
                 products.sequence_value = ++sequence_value;
+                products.date_add = int.Parse(Util.ConvertToTimestamp());
                 _context.Products.InsertOneAsync(products).Wait();
                 return true;
             }
@@ -58,19 +63,17 @@ namespace noche.Repository
             }
 
         }
-        public async Task<Products> Read(int sequence_value, string id = "")
+        public async Task<Products> Read(string id)
         {
             try
             {
-                if (string.IsNullOrEmpty(id))
-                {
-                    //return await _context.Products.Find(x => x.sequence_value == sequence_value).FirstAsync<Products>();
-                }
+                int tmp = 0;
+                int.TryParse(id, out tmp);
+
+                if (tmp > 0)
+                    return await _context.Products.Find(x => x.sequence_value == tmp).FirstAsync<Products>();
                 else
-                {
-                    //return await _context.Products.Find(x => x.Id == id).FirstAsync<Products>();
-                }
-                return null;
+                    return await _context.Products.Find(x => x.Id == id).FirstAsync<Products>();
             }
             catch (Exception ex)
             {
@@ -91,27 +94,87 @@ namespace noche.Repository
         //    throw new NotImplementedException();
         //}
 
-        public async Task<bool> Update(Products values)
+        public async Task<Products> Update(Products values)
         {
             try
             {
-
-                //var filter = Builders<Products>.Filter.Eq(s => s.Id, values.Id);
+                FilterDefinition<Products> filter;
+                int ds = int.Parse(Util.ConvertToTimestamp());
                 var update = Builders<Products>.Update
-                //.Set("cuisine", "American (New)")
+                .Set(x => x.name, values.name)
+                .Set(x => x.barcode, values.barcode)
                 .Set(x => x.pathimg, values.pathimg)
-                .Set(x => x.maker, values.maker);
+                .Set(x => x.idcstatus, values.idcstatus)
+                .Set(x => x.unitary_price, values.unitary_price)
+                .Set(x => x.unitary_cost, values.unitary_cost)
+                .Set(x => x.existence, values.existence)
+                .Set(x => x.maker, values.maker)
+                .Set(x => x.date_set, ds);
                 //var result = await _fileRepository.UpdateOneAsync(fileId, update);
 
-                var filter = Builders<Products>.Filter.Eq(s => s.sequence_value, values.sequence_value);
+                if (!string.IsNullOrEmpty(values.Id))
+                    filter = Builders<Products>.Filter.Eq(s => s.Id, values.Id);
+                else
+                    filter = Builders<Products>.Filter.Eq(s => s.sequence_value, values.sequence_value);
 
-                var result = await _context.Products.UpdateOneAsync(filter, update);
+                await _context.Products.UpdateOneAsync(filter, update);
+
+                var result = await Read(values.sequence_value.ToString());
+
+                //var delete_result = await _context.Products.DeleteOneAsync(filter);
+                //await _context.Products.InsertOneAsync(values);
+                //var result = await _context.Products.ReplaceOneAsync(filter, values);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<bool> DeletePhysical(string id)
+        {
+            try
+            {
+                FilterDefinition<Products> filter;
+                int tmpid = 0;
+                int.TryParse(id, out tmpid);
+
+                if (tmpid >= 0)
+                    filter = Builders<Products>.Filter.Eq(s => s.sequence_value, tmpid);
+                else
+                    filter = Builders<Products>.Filter.Eq(s => s.Id, id);
+
 
                 var delete_result = await _context.Products.DeleteOneAsync(filter);
 
-                await _context.Products.InsertOneAsync(values);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
-                //var result = await _context.Products.ReplaceOneAsync(filter, values);
+        public async Task<bool> Delete(string id)
+        {
+            int tmpid = 0;
+            try
+            {
+                int ds = int.Parse(Util.ConvertToTimestamp());
+                var update = Builders<Products>.Update
+                .Set(x => x.idcstatus, (int)CSTATUS.ELIMINADO)
+                .Set(x => x.date_set, ds);
+
+                int.TryParse(id, out tmpid);
+
+                FilterDefinition<Products> filter;
+                if (tmpid >= 0)
+                    filter = Builders<Products>.Filter.Eq(s => s.sequence_value, tmpid);
+                else
+                    filter = Builders<Products>.Filter.Eq(s => s.Id, id);
+
+                await _context.Products.UpdateOneAsync(filter, update);
                 return true;
             }
             catch (Exception ex)

@@ -12,6 +12,13 @@ namespace noche
         READALL,
         UPDATE,
         DELETE,
+        DELETEPHYSICAL,
+    }
+    public enum CSTATUS
+    {
+        ACTIVO = 1,
+        INACTIV = 2,
+        ELIMINADO = 3,
     }
     public class EnumsGlobal
     {

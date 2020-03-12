@@ -33,9 +33,9 @@ namespace noche.Controllers
         //[HttpGet("{id}",Name = "ProductsGet")]
         [HttpGet("{id}")]
         //[HttpGet("{id}")]
-        public async Task<Products> Read(int id)
+        public async Task<ResponseModel> Read(string id)
         {
-            return await _repository.Read(id);
+            return await executeactionAsync(Action.READID, id: id);
         }
 
         [HttpPost]
@@ -44,54 +44,77 @@ namespace noche.Controllers
             return await executeactionAsync(Action.CREATE, value: products);
         }
 
-        [HttpPut]
-        public async Task<ResponseModel> Update(Products products)
+        [HttpPut("{id}")]
+        public async Task<ResponseModel> Update(string id, Products products)
         {
             return await executeactionAsync(Action.UPDATE, value: products);
         }
-        private async Task<ResponseModel> executeactionAsync(Action action, int id = 0, Products value = null)
+
+        [HttpDelete("{id}")]
+        public async Task<ResponseModel> Delete(string id)
+        {
+            return await executeactionAsync(Action.DELETE, id: id);
+        }
+
+        [HttpDelete]
+        [Route("{id}/physical")]
+        public async Task<ResponseModel> DeletePhysical(string id)
+        {
+            return await executeactionAsync(Action.DELETEPHYSICAL, id: id);
+        }
+        private async Task<ResponseModel> executeactionAsync(Action action, string id = "", Products value = null)
         {
             ResponseModel rm = new ResponseModel();
             Products result = new Products();
 
             try
             {
-
                 switch (action)
                 {
                     case Action.CREATE:
                         rm.response = await _repository.Create(value);
                         rm.result = value;
+                        rm.SetResponse(rm.response, string.Empty);
                         break;
+
                     case Action.READID:
-                        //result = ng.Read(id: id).First();
+                        rm.result = await _repository.Read(id);
+                        if (!string.IsNullOrEmpty(rm.result.Id))
+                            rm.SetResponse(true, string.Empty);
                         break;
+
                     case Action.READALL:
                         var list = await _repository.GetAll();
                         rm.response = list.Count() > 0 ? true : false;
                         rm.result = list;
+                        rm.SetResponse(rm.response, string.Empty);
                         break;
-                    case Action.UPDATE:
-                         await _repository.Update(value);
 
-                        //value.idproducts = id > 0 ? id : value.idproducts;
-                        //result = ng.Update(value);
-                        //rm.SetResponse(true);
+                    case Action.UPDATE:
+                        rm.result = await _repository.Update(value);
+                        if (!string.IsNullOrEmpty(rm.result.Id))
+                            rm.SetResponse(true, string.Empty);
                         break;
+
                     case Action.DELETE:
-                        //bool flag = ng.Delete(id);
+                        rm.response = await _repository.Delete(id);
+                        rm.SetResponse(rm.response, string.Empty);
+                        break;
+
+                    case Action.DELETEPHYSICAL:
+                        rm.response = await _repository.DeletePhysical(id);
+                        rm.SetResponse(rm.response, string.Empty);
                         break;
 
                     default:
                         break;
                 }
-                
+
             }
             catch (Exception ex)
             {
                 rm.message = ex.Message;
             }
-
             return rm;
         }
 

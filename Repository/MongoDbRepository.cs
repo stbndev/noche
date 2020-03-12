@@ -22,8 +22,8 @@ namespace noche.Repository
         public int sequence_value { get; set; }
 
         [BsonRequired]
-        [BsonDefaultValue(0)]
-        public int maker { get; set; }
+        [BsonDefaultValue("system_admin")]
+        public string maker { get; set; }
 
         [BsonRequired]
         [BsonDefaultValue(0)]
