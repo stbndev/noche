@@ -9,38 +9,35 @@ using MongoDB.Driver;
 
 namespace noche.Repository
 {
-    public interface IEntries
+    public interface IShrinkage
     {
-        //Physical
         Task<bool> DeletePhysical(string id);
         Task<bool> Delete(string id);
 
-        Task<Entries> Update(Entries values);
-        Task<Entries> Read(string id);
-        Task<bool> Create(Entries products);
-        Task<IEnumerable<Entries>> GetAll();
-        
+        Task<Shrinkages> Update(Shrinkages values);
+        Task<Shrinkages> Read(string id);
+        Task<bool> Create(Shrinkages products);
+        Task<IEnumerable<Shrinkages>> GetAll();
     }
-    public class EntriesRepository : IEntries
+    public class ShrinkagesRepository : IShrinkage
     {
         private readonly MongoContext _context = null;
         private readonly IOptions<Mongosettings> _mongosettings;
 
 
-        public EntriesRepository(IOptions<Mongosettings> settings)
+        public ShrinkagesRepository(IOptions<Mongosettings> settings)
         {
             _mongosettings = settings;
             _context = new MongoContext(settings);
         }
-
-        public async Task<bool> Create(Entries values)
+        public async Task<bool> Create(Shrinkages values)
         {
             try
             {
-                int sequence_value = _context.EntriesNext();
+                int sequence_value = _context.ShrinkageNext();
                 values.sequence_value = ++sequence_value;
                 values.date_add = int.Parse(Util.ConvertToTimestamp());
-                _context.Entries.InsertOneAsync(values).Wait();
+                _context.Shrinkages.InsertOneAsync(values).Wait();
                 return true;
             }
             catch (Exception ex)
@@ -55,19 +52,19 @@ namespace noche.Repository
             try
             {
                 int ds = int.Parse(Util.ConvertToTimestamp());
-                var update = Builders<Entries>.Update
+                var update = Builders<Shrinkages>.Update
                 .Set(x => x.idcstatus, (int)CSTATUS.ELIMINADO)
                 .Set(x => x.date_set, ds);
 
                 int.TryParse(id, out tmpid);
+                FilterDefinition<Shrinkages> filter;
 
-                FilterDefinition<Entries> filter;
                 if (tmpid >= 0)
-                    filter = Builders<Entries>.Filter.Eq(s => s.sequence_value, tmpid);
+                    filter = Builders<Shrinkages>.Filter.Eq(s => s.sequence_value, tmpid);
                 else
-                    filter = Builders<Entries>.Filter.Eq(s => s.Id, id);
+                    filter = Builders<Shrinkages>.Filter.Eq(s => s.Id, id);
 
-                await _context.Entries.UpdateOneAsync(filter, update);
+                await _context.Shrinkages.UpdateOneAsync(filter, update);
                 return true;
             }
             catch (Exception ex)
@@ -80,16 +77,16 @@ namespace noche.Repository
         {
             try
             {
-                FilterDefinition<Entries> filter;
+                FilterDefinition<Shrinkages> filter;
                 int tmpid = 0;
                 int.TryParse(id, out tmpid);
 
                 if (tmpid >= 0)
-                    filter = Builders<Entries>.Filter.Eq(s => s.sequence_value, tmpid);
+                    filter = Builders<Shrinkages>.Filter.Eq(s => s.sequence_value, tmpid);
                 else
-                    filter = Builders<Entries>.Filter.Eq(s => s.Id, id);
+                    filter = Builders<Shrinkages>.Filter.Eq(s => s.Id, id);
 
-                var delete_result = await _context.Entries.DeleteOneAsync(filter);
+                var delete_result = await _context.Shrinkages.DeleteOneAsync(filter);
 
                 return true;
             }
@@ -99,11 +96,11 @@ namespace noche.Repository
             }
         }
 
-        public async Task<IEnumerable<Entries>> GetAll()
+        public async Task<IEnumerable<Shrinkages>> GetAll()
         {
             try
             {
-                return await _context.Entries.Find(_ => true).ToListAsync();
+                return await _context.Shrinkages.Find(_ => true).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -111,7 +108,7 @@ namespace noche.Repository
             }
         }
 
-        public async Task<Entries> Read(string id)
+        public async Task<Shrinkages> Read(string id)
         {
             try
             {
@@ -119,9 +116,9 @@ namespace noche.Repository
                 int.TryParse(id, out tmp);
 
                 if (tmp > 0)
-                    return await _context.Entries.Find(x => x.sequence_value == tmp).FirstAsync<Entries>();
+                    return await _context.Shrinkages.Find(x => x.sequence_value == tmp).FirstAsync<Shrinkages>();
                 else
-                    return await _context.Entries.Find(x => x.Id == id).FirstAsync<Entries>();
+                    return await _context.Shrinkages.Find(x => x.Id == id).FirstAsync<Shrinkages>();
             }
             catch (Exception ex)
             {
@@ -129,29 +126,27 @@ namespace noche.Repository
             }
         }
 
-        public async Task<Entries> Update(Entries values)
+        public async Task<Shrinkages> Update(Shrinkages values)
         {
             try
             {
-                FilterDefinition<Entries> filter;
+                FilterDefinition<Shrinkages> filter;
                 int ds = int.Parse(Util.ConvertToTimestamp());
-                var update = Builders<Entries>.Update
+                var update = Builders<Shrinkages>.Update
                 .Set(x => x.total, values.total)
                 .Set(x => x.date_set, ds)
                 .Set(x => x.idcstatus, values.idcstatus)
-                .Set(x => x.unitary_cost, values.unitary_cost)
-                .Set(x => x.quantity, values.quantity);
-
-
+                .Set(x => x.maker, values.maker)
+                .Set(x => x.details, values.details);
 
                 //var result = await _fileRepository.UpdateOneAsync(fileId, update);
 
                 if (!string.IsNullOrEmpty(values.Id))
-                    filter = Builders<Entries>.Filter.Eq(s => s.Id, values.Id);
+                    filter = Builders<Shrinkages>.Filter.Eq(s => s.Id, values.Id);
                 else
-                    filter = Builders<Entries>.Filter.Eq(s => s.sequence_value, values.sequence_value);
+                    filter = Builders<Shrinkages>.Filter.Eq(s => s.sequence_value, values.sequence_value);
 
-                await _context.Entries.UpdateOneAsync(filter, update);
+                await _context.Shrinkages.UpdateOneAsync(filter, update);
                 var result = await Read(values.sequence_value.ToString());
                 return result;
             }

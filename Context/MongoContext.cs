@@ -108,23 +108,30 @@ namespace noche.Context
                 return _db.GetCollection<SalesDetails>("salesdetails");
             }
         }
-        public IMongoCollection<Shrinkage> Shrinkage
+        public IMongoCollection<Shrinkages> Shrinkages
         {
             get
             {
-                return _db.GetCollection<Shrinkage>("shrinkage");
+                return _db.GetCollection<Shrinkages>("shrinkages");
             }
         }
 
-        public IMongoCollection<ShrinkageDetails> ShrinkageDetails
+        public int ShrinkageNext()
         {
-            get
+            int result = 0;
+            try
             {
-                return _db.GetCollection<ShrinkageDetails>("shrinkagedetails");
+                var collection = _db.GetCollection<Shrinkages>("shrinkages");
+                result = (from c in collection.AsQueryable<Shrinkages>() select c.sequence_value).Max();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message == "Sequence contains no elements")
+                    return result;
+                else
+                    throw ex;
             }
         }
-
-
-
     }
 }

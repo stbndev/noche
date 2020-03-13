@@ -8,14 +8,6 @@ namespace noche.Context
 {
     public class Audits
     {
-        //public decimal existence { get; set; }
-
-        //public decimal unitary_price { get; set; }
-        
-        //public decimal unitary_cost { get; set; }
-
-        //public decimal quantity { get; set; }
-
         [BsonRequired]
         public int sequence_value { get; set; }
 
@@ -25,7 +17,7 @@ namespace noche.Context
         [BsonDefaultValue(0)]
         public int idcompany { get; set; }
         [BsonRequired]
-        [BsonDefaultValue("system admin")]
+        [BsonDefaultValue("system_admin")]
         public string maker { get; set; }
         [BsonDefaultValue(0)]
         public int date_add { get; set; }
