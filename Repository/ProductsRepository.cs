@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
-using MongoDB.Bson;
 using MongoDB.Driver;
-using MongoDB.Driver.Builders;
 using MongoDB.Driver.Linq;
 using noche.Config;
 using noche.Context;
@@ -144,7 +142,6 @@ namespace noche.Repository
                     filter = Builders<Products>.Filter.Eq(s => s.sequence_value, tmpid);
                 else
                     filter = Builders<Products>.Filter.Eq(s => s.Id, id);
-
 
                 var delete_result = await _context.Products.DeleteOneAsync(filter);
 

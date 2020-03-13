@@ -5,8 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using noche.Config;
 using noche.Repository;
-using Microsoft.EntityFrameworkCore;
-using noche.Data;
 
 namespace noche
 {
@@ -27,12 +25,11 @@ namespace noche
             // Add functionality to inject IOptions<T>
             services.Configure<Mongosettings>(Configuration.GetSection("Mongosettings"));
             services.AddTransient<IProductRepository, ProductsRepository>();
+            services.AddTransient<IEntries, EntriesRepository>();
             services.AddTransient<ICstatus, CstatusRepository>();
             // end
             services.AddControllers();
 
-            //services.AddDbContext<nocheContext>(options =>
-            //        options.UseSqlServer(Configuration.GetConnectionString("nocheContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

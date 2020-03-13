@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace noche.Context
 {
-    public class ProductEntryDetails 
+    public class EntryDetails 
     {
         [BsonRequired]
         public int idproductentries { get; set; }

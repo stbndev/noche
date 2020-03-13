@@ -29,7 +29,30 @@ namespace noche.Context
                 _db = client.GetDatabase(_mongosettings.Value.DatabaseName);
 
         }
-
+        public IMongoCollection<Entries> Entries
+        {
+            get
+            {
+                return _db.GetCollection<Entries>("entries");
+            }
+        }
+        public int EntriesNext()
+        {
+            int result = 0;
+            try
+            {
+                var collection = _db.GetCollection<Entries>("entries");
+                result = (from c in collection.AsQueryable<Entries>() select c.sequence_value).Max();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message == "Sequence contains no elements")
+                    return result;
+                else
+                    throw ex;
+            }
+        }
         public IMongoCollection<Cstatus> Cstatus
         {
             get
@@ -47,40 +70,27 @@ namespace noche.Context
 
         public int ProductsNext()
         {
-            var collection = _db.GetCollection<Products>("products");
-            var result = (from c in collection.AsQueryable<Products>() select c.sequence_value).Max();
-            return result;
+            int result = 0;
+            try
+            {
+                var collection = _db.GetCollection<Products>("products");
+                result = (from c in collection.AsQueryable<Products>() select c.sequence_value).Max();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message == "Sequence contains no elements")
+                    return result;
+                else
+                    throw ex;
+            }
         }
 
-        public void ProductsSet()
-        {
-
-
-            //var Collection_ = _db.GetCollection<Products>("products");
-            //IMongoQuery Marker = Query.EQ("sequence_value", "2");
-
-            //IMongoUpdate Update_ = MongoDB.Driver.Builders.Update.Set("barcode", "0123456")
-            //     .Set("maker", "hardcode")
-            //     .Set("date_set", "31416");
-            //Collection_.Update(Marker, Update_);
-
-            //// end
-            //var collection = _db.GetCollection<Products>("products");
-            //var result = (from c in collection.AsQueryable<Products>() select c.sequence_value).Max();
-            //return result;
-
-
-
-        }
-        public IMongoCollection<ProductEntries> ProductEntries
-        {
-            get { return _db.GetCollection<ProductEntries>("productsentries"); }
-        }
-        public IMongoCollection<ProductEntryDetails> ProductEntryDetails
+        public IMongoCollection<EntryDetails> ProductEntryDetails
         {
             get
             {
-                return _db.GetCollection<ProductEntryDetails>("productsentrydetails");
+                return _db.GetCollection<EntryDetails>("productsentrydetails");
             }
         }
 
