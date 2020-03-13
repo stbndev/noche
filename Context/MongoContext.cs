@@ -29,6 +29,13 @@ namespace noche.Context
                 _db = client.GetDatabase(_mongosettings.Value.DatabaseName);
 
         }
+        public IMongoCollection<Cstatus> Cstatus
+        {
+            get
+            {
+                return _db.GetCollection<Cstatus>("cstatus");
+            }
+        }
         public IMongoCollection<Entries> Entries
         {
             get
@@ -53,13 +60,7 @@ namespace noche.Context
                     throw ex;
             }
         }
-        public IMongoCollection<Cstatus> Cstatus
-        {
-            get
-            {
-                return _db.GetCollection<Cstatus>("cstatus");
-            }
-        }
+        
         public IMongoCollection<Products> Products
         {
             get
@@ -86,14 +87,6 @@ namespace noche.Context
             }
         }
 
-        public IMongoCollection<EntryDetails> ProductEntryDetails
-        {
-            get
-            {
-                return _db.GetCollection<EntryDetails>("productsentrydetails");
-            }
-        }
-
         public IMongoCollection<Sales> Sales
         {
             get
@@ -101,13 +94,24 @@ namespace noche.Context
                 return _db.GetCollection<Sales>("sales");
             }
         }
-        public IMongoCollection<SalesDetails> SalesDetails
+        public int SalesNext()
         {
-            get
+            int result = 0;
+            try
             {
-                return _db.GetCollection<SalesDetails>("salesdetails");
+                var collection = _db.GetCollection<Sales>("sales");
+                result = (from c in collection.AsQueryable<Sales>() select c.sequence_value).Max();
+                return result;
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message == "Sequence contains no elements")
+                    return result;
+                else
+                    throw ex;
             }
         }
+
         public IMongoCollection<Shrinkages> Shrinkages
         {
             get

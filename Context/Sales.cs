@@ -1,9 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace noche.Context
 {
@@ -15,6 +12,20 @@ namespace noche.Context
 
         [BsonRequired]
         public decimal total { get; set; }
-        
+
+        public List<SalesDetails> details { get; set; }
+
+    }
+
+    public class SalesDetails
+    {
+        [BsonRequired]
+        public decimal unitary_cost { get; set; }
+        [BsonRequired]
+        public decimal unitary_price { get; set; }
+        [BsonRequired]
+        public int quantity { get; set; }
+        [BsonRequired]
+        public int idproducts { get; set; }
     }
 }
