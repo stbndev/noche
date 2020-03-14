@@ -19,10 +19,11 @@ namespace noche.Repository
         Task<Entries> Read(string id);
         Task<bool> Create(Entries products);
         Task<IEnumerable<Entries>> GetAll();
-        
+
     }
     public class EntriesRepository : IEntries
     {
+        private readonly IProductRepository _productRepository = null;
         private readonly MongoContext _context = null;
         private readonly IOptions<Mongosettings> _mongosettings;
 
@@ -31,16 +32,26 @@ namespace noche.Repository
         {
             _mongosettings = settings;
             _context = new MongoContext(settings);
+            _productRepository = new ProductsRepository(settings);
         }
 
         public async Task<bool> Create(Entries values)
         {
             try
             {
+                var product = await _productRepository.Read(values.idproducts.ToString());
+
                 int sequence_value = _context.EntriesNext();
                 values.sequence_value = ++sequence_value;
                 values.date_add = int.Parse(Util.ConvertToTimestamp());
+                values.total = values.unitary_cost * values.quantity;
                 _context.Entries.InsertOneAsync(values).Wait();
+
+                product.unitary_cost = values.unitary_cost;
+                product.existence = product.existence + values.quantity;
+                product.maker = values.maker;
+
+                await _productRepository.Update(product);
                 return true;
             }
             catch (Exception ex)
@@ -135,8 +146,10 @@ namespace noche.Repository
             {
                 FilterDefinition<Entries> filter;
                 int ds = int.Parse(Util.ConvertToTimestamp());
+                values.total = values.unitary_cost * values.quantity;
+
                 var update = Builders<Entries>.Update
-                .Set(x => x.total, values.total)
+                .Set(x => x.total,values.total )
                 .Set(x => x.date_set, ds)
                 .Set(x => x.idcstatus, values.idcstatus)
                 .Set(x => x.unitary_cost, values.unitary_cost)

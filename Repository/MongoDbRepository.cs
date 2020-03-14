@@ -22,7 +22,7 @@ namespace noche.Repository
         public int sequence_value { get; set; }
 
         [BsonRequired]
-        [BsonDefaultValue("system_admin")]
+        [BsonDefaultValue("noche")]
         public string maker { get; set; }
 
         [BsonRequired]
@@ -32,8 +32,6 @@ namespace noche.Repository
         [BsonRequired]
         [BsonDefaultValue(0)]
         public int date_set { get; set; }
-
-
     }
     public class MongoDbRepository<T> where T : EntityBase
     {
