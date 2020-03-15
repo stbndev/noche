@@ -14,13 +14,29 @@ namespace noche.Context
         [BsonRepresentation(BsonType.Decimal128)]
         public decimal total { get; set; }
 
-        [BsonRequired]
+        private decimal _unitary_cost;
         [BsonRepresentation(BsonType.Decimal128)]
-        public decimal unitary_cost { get; set; }
+        [BsonRequired]
+        public decimal unitary_cost
+        {
+            get { return _unitary_cost; }
+            set
+            {
+                _unitary_cost = (value > 0) ? Util.Rounding2digits(value) : value;
+            }
+        }
 
-        [BsonRequired]
+        private decimal _quantity;
         [BsonRepresentation(BsonType.Decimal128)]
-        public decimal quantity { get; set; }
+        [BsonRequired]
+        public decimal quantity
+        {
+            get { return _quantity; }
+            set
+            {
+                _quantity = (value > 0) ? Util.Rounding2digits(value) : value;
+            }
+        }
 
         [BsonRequired]
         [BsonRepresentation(BsonType.Int32)]

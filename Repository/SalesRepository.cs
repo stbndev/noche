@@ -26,20 +26,37 @@ namespace noche.Repository
     {
         private readonly MongoContext _context = null;
         private readonly IOptions<Mongosettings> _mongosettings;
+        private readonly IProductRepository _productRepository = null;
+
 
         public SalesRepository(IOptions<Mongosettings> settings)
         {
             _mongosettings = settings;
             _context = new MongoContext(settings);
+            _productRepository = new ProductsRepository(settings);
         }
 
-        public async  Task<bool> Create(Sales values)
+        public async Task<bool> Create(Sales values)
         {
+            decimal total = 0;
             try
             {
+
                 int sequence_value = _context.SalesNext();
                 values.sequence_value = ++sequence_value;
                 values.date_add = int.Parse(Util.ConvertToTimestamp());
+
+                foreach (var item in values.details)
+                {
+                    var product = await _productRepository.Read(item.idproducts.ToString());
+                    product.existence = product.existence - item.quantity;
+                    var subtotal = item.unitary_price * item.quantity;
+                    total += subtotal;
+                    item.unitary_cost = product.unitary_cost;
+                    await _productRepository.Update(product);
+                }
+
+                values.total = total;
                 _context.Sales.InsertOneAsync(values).Wait();
                 return true;
             }
@@ -121,7 +138,7 @@ namespace noche.Repository
                 if (tmp > 0)
                     return await _context.Sales.Find(x => x.sequence_value == tmp).FirstAsync<Sales>();
                 else
-                    return await _context.Sales.Find(x => x.Id == id).FirstAsync < Sales>();
+                    return await _context.Sales.Find(x => x.Id == id).FirstAsync<Sales>();
             }
             catch (Exception ex)
             {

@@ -50,6 +50,7 @@ namespace noche.Repository
             try
             {
                 int sequence_value = _context.ProductsNext();
+                products.existence = 0;
                 products.sequence_value = ++sequence_value;
                 products.date_add = int.Parse(Util.ConvertToTimestamp());
                 _context.Products.InsertOneAsync(products).Wait();
@@ -79,18 +80,6 @@ namespace noche.Repository
             }
         }
 
-        //Task<bool> Update(Products values)
-        //{
-        //    var userRepo = new MongoDbRepository<Products>(_mongosettings);
-        //    //userRepo.Save(new Products
-        //    //{
-        //    //    FirstName = "fn",
-        //    //    LastName = "ln"
-        //    //}).Wait();
-        //    userRepo.Save(values).Wait();
-
-        //    throw new NotImplementedException();
-        //}
 
         public async Task<Products> Update(Products values)
         {
@@ -107,6 +96,7 @@ namespace noche.Repository
                 .Set(x => x.unitary_cost, values.unitary_cost)
                 .Set(x => x.existence, values.existence)
                 .Set(x => x.maker, values.maker)
+                .Set(x => x.description, values.description)
                 .Set(x => x.date_set, ds);
                 //var result = await _fileRepository.UpdateOneAsync(fileId, update);
 

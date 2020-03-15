@@ -41,13 +41,13 @@ namespace noche.Controllers
         [HttpPost]
         public async Task<ResponseModel> Create(Products products)
         {
-            return await executeactionAsync(Action.CREATE, value: products);
+            return await executeactionAsync(Action.CREATE, values: products);
         }
 
         [HttpPut("{id}")]
-        public async Task<ResponseModel> Update(string id, Products products)
+        public async Task<ResponseModel> Update(string id, Products values)
         {
-            return await executeactionAsync(Action.UPDATE, value: products);
+            return await executeactionAsync(Action.UPDATE, id: id, values: values);
         }
 
         [HttpDelete("{id}")]
@@ -62,7 +62,7 @@ namespace noche.Controllers
         {
             return await executeactionAsync(Action.DELETEPHYSICAL, id: id);
         }
-        private async Task<ResponseModel> executeactionAsync(Action action, string id = "", Products value = null)
+        private async Task<ResponseModel> executeactionAsync(Action action, string id = "", Products values = null)
         {
             ResponseModel rm = new ResponseModel();
             Products result = new Products();
@@ -72,8 +72,8 @@ namespace noche.Controllers
                 switch (action)
                 {
                     case Action.CREATE:
-                        rm.response = await _repository.Create(value);
-                        rm.result = value;
+                        rm.response = await _repository.Create(values);
+                        rm.result = values;
                         rm.SetResponse(rm.response, string.Empty);
                         break;
 
@@ -91,7 +91,8 @@ namespace noche.Controllers
                         break;
 
                     case Action.UPDATE:
-                        rm.result = await _repository.Update(value);
+                        values.Id = id;
+                        rm.result = await _repository.Update(values);
                         if (!string.IsNullOrEmpty(rm.result.Id))
                             rm.SetResponse(true, string.Empty);
                         break;

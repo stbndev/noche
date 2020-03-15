@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace noche.Config
+namespace noche
 {
     public class Util
     {
@@ -19,6 +19,11 @@ namespace noche.Config
 
             //int tmpepoch = int.Parse(epoch.ToString());
             return epoch.ToString();
+        }
+
+        public static decimal Rounding2digits(decimal values)
+        {
+            return Math.Round(values, 2);
         }
     }
 }
