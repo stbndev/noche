@@ -25,11 +25,11 @@ namespace noche.Repository
     public class SalesRepository : ISales
     {
         private readonly MongoContext _context = null;
-        private readonly IOptions<Mongosettings> _mongosettings;
+        private readonly IOptions<Nochesettings> _mongosettings;
         private readonly IProductRepository _productRepository = null;
 
 
-        public SalesRepository(IOptions<Mongosettings> settings)
+        public SalesRepository(IOptions<Nochesettings> settings)
         {
             _mongosettings = settings;
             _context = new MongoContext(settings);

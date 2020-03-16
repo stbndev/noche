@@ -25,10 +25,10 @@ namespace noche.Repository
     {
         private readonly IProductRepository _productRepository = null;
         private readonly MongoContext _context = null;
-        private readonly IOptions<Mongosettings> _mongosettings;
+        private readonly IOptions<Nochesettings> _mongosettings;
 
 
-        public EntriesRepository(IOptions<Mongosettings> settings)
+        public EntriesRepository(IOptions<Nochesettings> settings)
         {
             _mongosettings = settings;
             _context = new MongoContext(settings);

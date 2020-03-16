@@ -25,7 +25,7 @@ namespace noche.Repository
     {
         private readonly MongoContext _context = null;
 
-        public CstatusRepository(IOptions<Mongosettings> settings)
+        public CstatusRepository(IOptions<Nochesettings> settings)
         {
             _context = new MongoContext(settings);
         }

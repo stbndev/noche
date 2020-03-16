@@ -1,19 +1,15 @@
 ﻿using Dropbox.Api;
 using Dropbox.Api.Files;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using noche.Models;
-
+using noche.Repository;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace noche.Controllers
 {
@@ -21,9 +17,12 @@ namespace noche.Controllers
     [ApiController]
     public class DocFileController : ControllerBase
     {
-        public DBX dbx { get; set; } = new DBX();
-        public ResponseModel rm { get; set; } = new ResponseModel();
+        private DBX dbx { get; set; } = new DBX();
+        private ResponseModel rm { get; set; } = new ResponseModel();
 
+        private readonly IDocFile _repository;
+
+        public DocFileController(IDocFile ie) { _repository = ie; }
 
         async Task Upload(DropboxClient dbx, string folder, string file, string content)
         {
@@ -49,7 +48,7 @@ namespace noche.Controllers
                     string tmpname = Util.ConvertToTimestamp();
                     tmpname = tmpname + Path.GetExtension(postedFile.FileName);
                     dbx.fileName = tmpname;
-                    dbx.hpf = file.OpenReadStream(); 
+                    dbx.hpf = file.OpenReadStream();
 
                     var tmp = Task.Run((Func<Task>)_dbxRun);
                     tmp.Wait();
@@ -57,11 +56,12 @@ namespace noche.Controllers
             }
             return rm;
         }
-        
+
         async Task _dbxRun()
         {
-            dbx.folderDBX = "products";
-            dbx.tokenDBX = "piuQiwTZUlwAAAAAAAC5sxZkD1aF50J-4l0SuJ5GwdmvKrKOTkrQKDVmhRXW0xmu";
+            var dbxsettings = await _repository.Get();
+            dbx.folderDBX = dbxsettings.foldername;
+            dbx.tokenDBX = dbxsettings.credentials;
 
             try
             {
@@ -74,10 +74,7 @@ namespace noche.Controllers
                     if (checkFolderExist)
                         await dbx.dbx.Files.CreateFolderAsync("/" + dbx.folderDBX, false);
 
-                    //var _tmp = await dbx.dbx.Files.UploadAsync(remotePath,
-                    //                                        body: dbx.hpf.InputStream);
-                    var _tmp = await dbx.dbx.Files.UploadAsync(remotePath,
-                                                            body: dbx.hpf);
+                    var _tmp = await dbx.dbx.Files.UploadAsync(remotePath, body: dbx.hpf);
 
                     var result = await dbx.dbx.Sharing.CreateSharedLinkWithSettingsAsync(remotePath);
                     var url = result.Url;
@@ -85,17 +82,16 @@ namespace noche.Controllers
                     url = url.Replace("?dl=0", "");
                     dbx.linkDBX = url;
                     dbx.flag = true;
-                    rm.href = url;
+                    rm.href = result.Url;
                     rm.response = true;
+                    rm.result = dbx.linkDBX;
+                    rm.SetResponse(rm.response);
                 }
             }
             catch (Exception ex)
             {
-                // TODO
-                // put nlog config here
-                Console.WriteLine(ex.Message);
+                rm.message = ex.Message;
                 rm.response = false;
-
             }
         }
     }
@@ -105,8 +101,8 @@ namespace noche.Controllers
     {
         public DropboxClient dbx { get; set; }
         public byte[] bytes { get; set; }
-        public Stream  hpf { get; set; }
-        
+        public Stream hpf { get; set; }
+
         public string fileName { get; set; }
         public bool flag { get; set; }
         public string folderDBX { get; set; }

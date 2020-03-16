@@ -22,10 +22,10 @@ namespace noche.Repository
     public class ShrinkagesRepository : IShrinkage
     {
         private readonly MongoContext _context = null;
-        private readonly IOptions<Mongosettings> _mongosettings;
+        private readonly IOptions<Nochesettings> _mongosettings;
         private readonly IProductRepository _productRepository = null;
 
-        public ShrinkagesRepository(IOptions<Mongosettings> settings)
+        public ShrinkagesRepository(IOptions<Nochesettings> settings)
         {
             _mongosettings = settings;
             _context = new MongoContext(settings);

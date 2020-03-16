@@ -14,12 +14,12 @@ namespace noche.Context
     public class MongoContext
     {
         private readonly IMongoDatabase _db = null;
-        private readonly IOptions<Mongosettings> _mongosettings;
+        private readonly IOptions<Nochesettings> _mongosettings;
 
         //IConfiguration configuration;
 
 
-        public MongoContext(IOptions<Mongosettings> settings)
+        public MongoContext(IOptions<Nochesettings> settings)
         {
 
             _mongosettings = settings;

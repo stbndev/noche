@@ -23,12 +23,13 @@ namespace noche
             //services.AddMvc();
             //start
             // Add functionality to inject IOptions<T>
-            services.Configure<Mongosettings>(Configuration.GetSection("Mongosettings"));
+            services.Configure<Nochesettings>(Configuration.GetSection("Nochesettings"));
             services.AddTransient<IProductRepository, ProductsRepository>();
             services.AddTransient<IEntries, EntriesRepository>();
             services.AddTransient<ICstatus, CstatusRepository>();
             services.AddTransient<ISales, SalesRepository>();
             services.AddTransient<IShrinkage, ShrinkagesRepository>();
+            services.AddTransient<IDocFile, DocFileRepository>();
             // end
             services.AddControllers();
 

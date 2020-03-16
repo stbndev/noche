@@ -36,10 +36,10 @@ namespace noche.Repository
     {
         private IMongoDatabase _database = null;
         private IMongoCollection<T> _collection;
-        private readonly IOptions<Mongosettings> _mongosettings;
+        private readonly IOptions<Nochesettings> _mongosettings;
 
 
-        public MongoDbRepository(IOptions<Mongosettings> settings)
+        public MongoDbRepository(IOptions<Nochesettings> settings)
         {
             _mongosettings = settings;
             var client = new MongoClient(_mongosettings.Value.ConnectionString);
