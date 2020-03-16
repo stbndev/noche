@@ -23,20 +23,31 @@ namespace noche.Repository
     {
         private readonly MongoContext _context = null;
         private readonly IOptions<Mongosettings> _mongosettings;
-
+        private readonly IProductRepository _productRepository = null;
 
         public ShrinkagesRepository(IOptions<Mongosettings> settings)
         {
             _mongosettings = settings;
             _context = new MongoContext(settings);
+            _productRepository = new ProductsRepository(settings);
         }
         public async Task<bool> Create(Shrinkages values)
         {
+            decimal total = 0;
             try
-            {
+            {                
                 int sequence_value = _context.ShrinkageNext();
                 values.sequence_value = ++sequence_value;
                 values.date_add = int.Parse(Util.ConvertToTimestamp());
+
+                foreach (var item in values.details)
+                {
+                    var product = await _productRepository.Read(item.idproducts.ToString());
+                    var subtotal = product.unitary_cost * item.quantity;
+                    item.unitary_cost = product.unitary_cost;
+                    total += subtotal ;
+                }
+                values.total = total;
                 _context.Shrinkages.InsertOneAsync(values).Wait();
                 return true;
             }

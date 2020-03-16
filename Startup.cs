@@ -28,6 +28,7 @@ namespace noche
             services.AddTransient<IEntries, EntriesRepository>();
             services.AddTransient<ICstatus, CstatusRepository>();
             services.AddTransient<ISales, SalesRepository>();
+            services.AddTransient<IShrinkage, ShrinkagesRepository>();
             // end
             services.AddControllers();
 

@@ -39,7 +39,7 @@ namespace noche.Controllers
         [HttpPut("{id}")]
         public async Task<ResponseModel> Update(string id, Shrinkages values)
         {
-            return await executeactionAsync(Action.UPDATE, values: values);
+            return await executeactionAsync(Action.UPDATE, id: id, values: values);
         }
 
         [HttpDelete("{id}")]
@@ -83,6 +83,7 @@ namespace noche.Controllers
                         break;
 
                     case Action.UPDATE:
+                        values.Id = id;
                         rm.result = await _repository.Update(values);
                         if (!string.IsNullOrEmpty(rm.result.Id))
                             rm.SetResponse(true, string.Empty);
