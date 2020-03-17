@@ -37,18 +37,18 @@ namespace noche.Controllers
         }
 
         [HttpPost]
-        public async Task<ResponseModel> Post(ICollection<IFormFile> files)
+        public async Task<ResponseModel> Post(ICollection<IFormFile> file)
         {
 
-            foreach (var file in files)
+            foreach (var item in file)
             {
-                if (file.Length > 0)
+                if (item.Length > 0)
                 {
-                    var postedFile = file;
+                    var postedFile = item;
                     string tmpname = Util.ConvertToTimestamp();
                     tmpname = tmpname + Path.GetExtension(postedFile.FileName);
                     dbx.fileName = tmpname;
-                    dbx.hpf = file.OpenReadStream();
+                    dbx.hpf = item.OpenReadStream();
 
                     var tmp = Task.Run((Func<Task>)_dbxRun);
                     tmp.Wait();
@@ -88,9 +88,15 @@ namespace noche.Controllers
                     rm.SetResponse(rm.response);
                 }
             }
+            catch (DropboxException dex) 
+            {
+                rm.message = "Error Fatal 404: " + dex.Message + dex.InnerException.Message;
+
+            }
             catch (Exception ex)
             {
-                rm.message = ex.Message;
+                rm.message += "Error Fatal 404: " + ex.Message + ex.InnerException.Message;
+
                 rm.response = false;
             }
         }
