@@ -43,7 +43,7 @@ namespace noche.Repository
             {
 
                 int sequence_value = _context.SalesNext();
-                values.sequence_value = ++sequence_value;
+                values.idsales = ++sequence_value;
                 values.date_add = int.Parse(Util.ConvertToTimestamp());
 
                 foreach (var item in values.details)
@@ -80,7 +80,7 @@ namespace noche.Repository
 
                 FilterDefinition<Sales> filter;
                 if (tmpid >= 0)
-                    filter = Builders<Sales>.Filter.Eq(s => s.sequence_value, tmpid);
+                    filter = Builders<Sales>.Filter.Eq(s => s.idsales, tmpid);
                 else
                     filter = Builders<Sales>.Filter.Eq(s => s.Id, id);
 
@@ -102,7 +102,7 @@ namespace noche.Repository
                 int.TryParse(id, out tmpid);
 
                 if (tmpid >= 0)
-                    filter = Builders<Sales>.Filter.Eq(s => s.sequence_value, tmpid);
+                    filter = Builders<Sales>.Filter.Eq(s => s.idsales, tmpid);
                 else
                     filter = Builders<Sales>.Filter.Eq(s => s.Id, id);
 
@@ -136,7 +136,7 @@ namespace noche.Repository
                 int.TryParse(id, out tmp);
 
                 if (tmp > 0)
-                    return await _context.Sales.Find(x => x.sequence_value == tmp).FirstAsync<Sales>();
+                    return await _context.Sales.Find(x => x.idsales == tmp).FirstAsync<Sales>();
                 else
                     return await _context.Sales.Find(x => x.Id == id).FirstAsync<Sales>();
             }
@@ -150,21 +150,22 @@ namespace noche.Repository
         {
             try
             {
-                FilterDefinition<Entries> filter;
+                FilterDefinition<Sales> filter;
                 int ds = int.Parse(Util.ConvertToTimestamp());
-                var update = Builders<Entries>.Update
+                var update = Builders<Sales>.Update
                 .Set(x => x.total, values.total)
                 .Set(x => x.date_set, ds)
                 .Set(x => x.idcstatus, values.idcstatus);
 
+                // #unattended
 
                 if (!string.IsNullOrEmpty(values.Id))
-                    filter = Builders<Entries>.Filter.Eq(s => s.Id, values.Id);
+                    filter = Builders<Sales>.Filter.Eq(s => s.Id, values.Id);
                 else
-                    filter = Builders<Entries>.Filter.Eq(s => s.sequence_value, values.sequence_value);
+                    filter = Builders<Sales>.Filter.Eq(s => s.idsales, values.idsales);
 
-                await _context.Entries.UpdateOneAsync(filter, update);
-                var result = await Read(values.sequence_value.ToString());
+                await _context.Sales.UpdateOneAsync(filter, update);
+                var result = await Read(values.idsales.ToString());
                 return result;
             }
             catch (Exception ex)

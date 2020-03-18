@@ -88,7 +88,7 @@ namespace noche.Controllers
                         break;
 
                     case Action.UPDATE:
-                        values.Id = id;
+                        values.idproducts = int.Parse(id);
                         rm.result = await _repository.Update(values);
                         if (!string.IsNullOrEmpty(rm.result.Id))
                             rm.SetResponse(true, string.Empty);

@@ -14,23 +14,22 @@ namespace noche.Repository
 
         [BsonRequired]
         [BsonDefaultValue(0)]
+        public int idcstatus { get; set; }
+
+        [BsonRequired]
+        [BsonDefaultValue(0)]
         public int idcompany { get; set; }
 
         [BsonRequired]
-        [BsonDefaultValue(0)]
-        public int sequence_value { get; set; }
+        [BsonDefaultValue("system_admin")]
+        public string maker { get; set; }
 
-        [BsonRequired]
-        [BsonDefaultValue("noche")]
-        public string maker { get; set; } = "noche";
-
-        [BsonRequired]
         [BsonDefaultValue(0)]
-        public int date_add { get; set; } = 0;
-
-        [BsonRequired]
+        public int date_add { get; set; }
         [BsonDefaultValue(0)]
-        public int date_set { get; set; } = 0;
+        public int date_set { get; set; }
+        
+        
     }
     public class MongoDbRepository<T> where T : EntityBase
     {

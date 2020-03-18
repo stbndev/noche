@@ -23,6 +23,7 @@ namespace noche
             //services.AddMvc();
             //start
             // Add functionality to inject IOptions<T>
+            services.AddCors();
             services.Configure<Nochesettings>(Configuration.GetSection("Nochesettings"));
             services.AddTransient<IProductRepository, ProductsRepository>();
             services.AddTransient<IEntries, EntriesRepository>();

@@ -35,6 +35,7 @@ namespace noche.Repository
                 foldername = _settings.Value.dbxfolder,
                 credentials = _settings.Value.dbxcredentials
             };
+            
             return docFileSettings;
         }
     }

@@ -37,7 +37,7 @@ namespace noche.Repository
             try
             {                
                 int sequence_value = _context.ShrinkageNext();
-                values.sequence_value = ++sequence_value;
+                values.idshrinkages = ++sequence_value;
                 values.date_add = int.Parse(Util.ConvertToTimestamp());
 
                 foreach (var item in values.details)
@@ -71,7 +71,7 @@ namespace noche.Repository
                 FilterDefinition<Shrinkages> filter;
 
                 if (tmpid >= 0)
-                    filter = Builders<Shrinkages>.Filter.Eq(s => s.sequence_value, tmpid);
+                    filter = Builders<Shrinkages>.Filter.Eq(s => s.idshrinkages, tmpid);
                 else
                     filter = Builders<Shrinkages>.Filter.Eq(s => s.Id, id);
 
@@ -93,7 +93,7 @@ namespace noche.Repository
                 int.TryParse(id, out tmpid);
 
                 if (tmpid >= 0)
-                    filter = Builders<Shrinkages>.Filter.Eq(s => s.sequence_value, tmpid);
+                    filter = Builders<Shrinkages>.Filter.Eq(s => s.idshrinkages, tmpid);
                 else
                     filter = Builders<Shrinkages>.Filter.Eq(s => s.Id, id);
 
@@ -127,7 +127,7 @@ namespace noche.Repository
                 int.TryParse(id, out tmp);
 
                 if (tmp > 0)
-                    return await _context.Shrinkages.Find(x => x.sequence_value == tmp).FirstAsync<Shrinkages>();
+                    return await _context.Shrinkages.Find(x => x.idshrinkages == tmp).FirstAsync<Shrinkages>();
                 else
                     return await _context.Shrinkages.Find(x => x.Id == id).FirstAsync<Shrinkages>();
             }
@@ -155,10 +155,10 @@ namespace noche.Repository
                 if (!string.IsNullOrEmpty(values.Id))
                     filter = Builders<Shrinkages>.Filter.Eq(s => s.Id, values.Id);
                 else
-                    filter = Builders<Shrinkages>.Filter.Eq(s => s.sequence_value, values.sequence_value);
+                    filter = Builders<Shrinkages>.Filter.Eq(s => s.idshrinkages, values.idshrinkages);
 
                 await _context.Shrinkages.UpdateOneAsync(filter, update);
-                var result = await Read(values.sequence_value.ToString());
+                var result = await Read(values.idshrinkages.ToString());
                 return result;
             }
             catch (Exception ex)

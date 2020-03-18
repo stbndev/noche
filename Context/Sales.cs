@@ -1,14 +1,15 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using noche.Repository;
 using System.Collections.Generic;
 
 namespace noche.Context
 {
-    public class Sales : Audits
+    public class Sales : EntityBase
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        [BsonRequired]
+        [BsonRepresentation(BsonType.Int32)]
+        public int idsales { get; set; }
 
         [BsonRequired]
         public decimal total { get; set; }

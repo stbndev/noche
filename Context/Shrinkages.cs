@@ -1,18 +1,17 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using noche.Repository;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace noche.Context
 {
-    public class Shrinkages : Audits
+    public class Shrinkages : EntityBase
     {
+        
+        
         [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        [BsonDefaultValue(0)]
+        public int idshrinkages { get; set; }
 
         [BsonRequired]
         [BsonDefaultValue(0)]

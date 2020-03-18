@@ -49,7 +49,7 @@ namespace noche.Context
             try
             {
                 var collection = _db.GetCollection<Entries>("entries");
-                result = (from c in collection.AsQueryable<Entries>() select c.sequence_value).Max();
+                result = (from c in collection.AsQueryable<Entries>() select c.idproducts).Max();
                 return result;
             }
             catch (Exception ex)
@@ -75,7 +75,7 @@ namespace noche.Context
             try
             {
                 var collection = _db.GetCollection<Products>("products");
-                result = (from c in collection.AsQueryable<Products>() select c.sequence_value).Max();
+                result = (from c in collection.AsQueryable<Products>() select c.idproducts).Max();
                 return result;
             }
             catch (Exception ex)
@@ -100,7 +100,7 @@ namespace noche.Context
             try
             {
                 var collection = _db.GetCollection<Sales>("sales");
-                result = (from c in collection.AsQueryable<Sales>() select c.sequence_value).Max();
+                result = (from c in collection.AsQueryable<Sales>() select c.idsales).Max();
                 return result;
             }
             catch (Exception ex)
@@ -126,7 +126,7 @@ namespace noche.Context
             try
             {
                 var collection = _db.GetCollection<Shrinkages>("shrinkages");
-                result = (from c in collection.AsQueryable<Shrinkages>() select c.sequence_value).Max();
+                result = (from c in collection.AsQueryable<Shrinkages>() select c.idshrinkages).Max();
                 return result;
             }
             catch (Exception ex)

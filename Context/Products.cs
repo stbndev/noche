@@ -29,11 +29,16 @@ namespace noche.Context
         [BsonDefaultValue("")]
         public string pathimg { get; set; }
 
-        [BsonRequired]
-        [BsonRepresentation(BsonType.Int32)]
-        public int idcstatus { get; set; }
+        private int _idproducts;
 
-        
+        [BsonRequired]
+        [BsonDefaultValue(0)]
+        public int idproducts
+        {
+            get { return _idproducts; }
+            set { _idproducts = value; }
+        }
+
 
         private decimal _unitary_price;
         [BsonRepresentation(BsonType.Decimal128)]

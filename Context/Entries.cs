@@ -8,6 +8,10 @@ namespace noche.Context
     {
         [BsonRequired]
         [BsonRepresentation(BsonType.Int32)]
+        public int identries { get; set; }
+
+        [BsonRequired]
+        [BsonRepresentation(BsonType.Int32)]
         public int idproducts { get; set; }
 
         [BsonRequired]
@@ -37,9 +41,5 @@ namespace noche.Context
                 _quantity = (value > 0) ? Util.Rounding2digits(value) : value;
             }
         }
-
-        [BsonRequired]
-        [BsonRepresentation(BsonType.Int32)]
-        public int idcstatus { get; set; }
     }
 }

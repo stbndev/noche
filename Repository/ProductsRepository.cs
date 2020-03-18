@@ -51,7 +51,7 @@ namespace noche.Repository
             {
                 int sequence_value = _context.ProductsNext();
                 products.existence = 0;
-                products.sequence_value = ++sequence_value;
+                products.idproducts = ++sequence_value;
                 products.date_add = int.Parse(Util.ConvertToTimestamp());
                 _context.Products.InsertOneAsync(products).Wait();
                 return true;
@@ -70,7 +70,7 @@ namespace noche.Repository
                 int.TryParse(id, out tmp);
 
                 if (tmp > 0)
-                    return await _context.Products.Find(x => x.sequence_value == tmp).FirstAsync<Products>();
+                    return await _context.Products.Find(x => x.idproducts == tmp).FirstAsync<Products>();
                 else
                     return await _context.Products.Find(x => x.Id == id).FirstAsync<Products>();
             }
@@ -103,11 +103,11 @@ namespace noche.Repository
                 if (!string.IsNullOrEmpty(values.Id))
                     filter = Builders<Products>.Filter.Eq(s => s.Id, values.Id);
                 else
-                    filter = Builders<Products>.Filter.Eq(s => s.sequence_value, values.sequence_value);
+                    filter = Builders<Products>.Filter.Eq(s => s.idproducts, values.idproducts);
 
                 await _context.Products.UpdateOneAsync(filter, update);
 
-                var result = await Read(values.sequence_value.ToString());
+                var result = await Read(values.idproducts.ToString());
 
                 //var delete_result = await _context.Products.DeleteOneAsync(filter);
                 //await _context.Products.InsertOneAsync(values);
@@ -129,7 +129,7 @@ namespace noche.Repository
                 int.TryParse(id, out tmpid);
 
                 if (tmpid >= 0)
-                    filter = Builders<Products>.Filter.Eq(s => s.sequence_value, tmpid);
+                    filter = Builders<Products>.Filter.Eq(s => s.idproducts, tmpid);
                 else
                     filter = Builders<Products>.Filter.Eq(s => s.Id, id);
 
@@ -157,7 +157,7 @@ namespace noche.Repository
 
                 FilterDefinition<Products> filter;
                 if (tmpid >= 0)
-                    filter = Builders<Products>.Filter.Eq(s => s.sequence_value, tmpid);
+                    filter = Builders<Products>.Filter.Eq(s => s.idproducts, tmpid);
                 else
                     filter = Builders<Products>.Filter.Eq(s => s.Id, id);
 
