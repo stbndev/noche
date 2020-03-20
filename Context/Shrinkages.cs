@@ -7,8 +7,6 @@ namespace noche.Context
 {
     public class Shrinkages : EntityBase
     {
-        
-        
         [BsonId]
         [BsonDefaultValue(0)]
         public int idshrinkages { get; set; }
