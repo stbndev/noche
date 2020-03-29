@@ -11,8 +11,6 @@ namespace noche.Context
 {
     public class Products : EntityBase
     {
-
-
         [BsonRequired]
         [BsonRepresentation(BsonType.String)]
         public string name { get; set; }

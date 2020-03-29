@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using noche.Context;
-using noche.Config;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using noche.Config;
+using noche.Context;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace noche.Repository
 {
@@ -66,6 +65,9 @@ namespace noche.Repository
             try
             {
                 int ds = int.Parse(Util.ConvertToTimestamp());
+                var entries = await this.Read(id);
+                var product = await _productRepository.Read(entries.idproducts.ToString());
+
                 var update = Builders<Entries>.Update
                 .Set(x => x.idcstatus, (int)CSTATUS.ELIMINADO)
                 .Set(x => x.date_set, ds);
@@ -78,6 +80,8 @@ namespace noche.Repository
                 else
                     filter = Builders<Entries>.Filter.Eq(s => s.Id, id);
 
+                product.existence = product.existence - entries.quantity;
+                await _productRepository.Update(product);
                 await _context.Entries.UpdateOneAsync(filter, update);
                 return true;
             }
@@ -91,6 +95,8 @@ namespace noche.Repository
         {
             try
             {
+                var entries = await this.Read(id);
+                var product = await _productRepository.Read(entries.idproducts.ToString());
                 FilterDefinition<Entries> filter;
                 int tmpid = 0;
                 int.TryParse(id, out tmpid);
@@ -100,8 +106,11 @@ namespace noche.Repository
                 else
                     filter = Builders<Entries>.Filter.Eq(s => s.Id, id);
 
-                var delete_result = await _context.Entries.DeleteOneAsync(filter);
+                if (entries.idcstatus != (int)CSTATUS.ELIMINADO)
+                    product.existence = product.existence - entries.quantity;
 
+                await _productRepository.Update(product);
+                var delete_result = await _context.Entries.DeleteOneAsync(filter);
                 return true;
             }
             catch (Exception ex)
@@ -144,20 +153,21 @@ namespace noche.Repository
         {
             try
             {
+                var product = await _productRepository.Read(values.idproducts.ToString());
+                var entries = await this.Read(values.identries.ToString());
+
                 FilterDefinition<Entries> filter;
                 int ds = int.Parse(Util.ConvertToTimestamp());
                 values.total = values.unitary_cost * values.quantity;
 
                 var update = Builders<Entries>.Update
-                .Set(x => x.total,values.total )
+                .Set(x => x.total, values.total)
                 .Set(x => x.date_set, ds)
                 .Set(x => x.idcstatus, values.idcstatus)
+                .Set(x => x.idcompany, values.idcompany)
                 .Set(x => x.unitary_cost, values.unitary_cost)
                 .Set(x => x.quantity, values.quantity);
 
-
-
-                //var result = await _fileRepository.UpdateOneAsync(fileId, update);
 
                 if (!string.IsNullOrEmpty(values.Id))
                     filter = Builders<Entries>.Filter.Eq(s => s.Id, values.Id);
@@ -165,7 +175,16 @@ namespace noche.Repository
                     filter = Builders<Entries>.Filter.Eq(s => s.identries, values.identries);
 
                 await _context.Entries.UpdateOneAsync(filter, update);
+
+                product.unitary_cost = values.unitary_cost;
+                product.existence = product.existence - entries.quantity;
+                product.existence = product.existence + values.quantity;
+                product.maker = values.maker;
+
+                await _productRepository.Update(product);
+
                 var result = await Read(values.identries.ToString());
+
                 return result;
             }
             catch (Exception ex)

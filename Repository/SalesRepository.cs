@@ -44,6 +44,7 @@ namespace noche.Repository
 
                 int sequence_value = _context.SalesNext();
                 values.idsales = ++sequence_value;
+                values.idcstatus = (int)CSTATUS.ACTIVO;
                 values.date_add = int.Parse(Util.ConvertToTimestamp());
 
                 foreach (var item in values.details)
@@ -79,12 +80,10 @@ namespace noche.Repository
                 int.TryParse(id, out tmpid);
 
                 FilterDefinition<Sales> filter;
-                if (tmpid >= 0)
-                    filter = Builders<Sales>.Filter.Eq(s => s.idsales, tmpid);
-                else
-                    filter = Builders<Sales>.Filter.Eq(s => s.Id, id);
+                filter = (tmpid > 0) ? Builders<Sales>.Filter.Eq(s => s.idsales, tmpid) : Builders<Sales>.Filter.Eq(s => s.Id, id);
 
                 await _context.Sales.UpdateOneAsync(filter, update);
+
                 return true;
             }
             catch (Exception ex)
@@ -150,19 +149,29 @@ namespace noche.Repository
         {
             try
             {
-                FilterDefinition<Sales> filter;
+                if (values.idcstatus != (int)CSTATUS.CANCELADO)
+                    throw new Exception("* Operación invalida");
+                else
+                {
+                    var sales = await Read(values.idsales.ToString());
+                    foreach (var itemdb in sales.details)
+                    {
+                        var product = await _productRepository.Read(itemdb.idproducts.ToString());
+                        product.existence = product.existence + itemdb.quantity;
+                        await _productRepository.Update(product);
+                    }
+                }
+
+                
                 int ds = int.Parse(Util.ConvertToTimestamp());
                 var update = Builders<Sales>.Update
-                .Set(x => x.total, values.total)
                 .Set(x => x.date_set, ds)
+                .Set(x => x.maker, values.maker)
                 .Set(x => x.idcstatus, values.idcstatus);
 
-                // #unattended
-
-                if (!string.IsNullOrEmpty(values.Id))
-                    filter = Builders<Sales>.Filter.Eq(s => s.Id, values.Id);
-                else
-                    filter = Builders<Sales>.Filter.Eq(s => s.idsales, values.idsales);
+                int tmpid = 0;
+                int.TryParse(values.Id, out tmpid);
+                FilterDefinition<Sales> filter = (tmpid > 0) ? Builders<Sales>.Filter.Eq(s => s.idsales, values.idsales) : Builders<Sales>.Filter.Eq(s => s.Id, values.Id);
 
                 await _context.Sales.UpdateOneAsync(filter, update);
                 var result = await Read(values.idsales.ToString());

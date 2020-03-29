@@ -16,9 +16,6 @@ namespace noche.Context
         private readonly IMongoDatabase _db = null;
         private readonly IOptions<Nochesettings> _mongosettings;
 
-        //IConfiguration configuration;
-
-
         public MongoContext(IOptions<Nochesettings> settings)
         {
 

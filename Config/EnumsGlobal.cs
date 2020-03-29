@@ -19,6 +19,7 @@ namespace noche
         ACTIVO = 1,
         INACTIV = 2,
         ELIMINADO = 3,
+        CANCELADO = 4,
     }
     public class EnumsGlobal
     {

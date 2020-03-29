@@ -12,8 +12,8 @@ namespace noche.Context
         public int idsales { get; set; }
 
         [BsonRequired]
+        [BsonRepresentation(BsonType.Decimal128)]
         public decimal total { get; set; }
-
 
         public List<SalesDetails> details { get; set; }
 
