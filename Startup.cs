@@ -20,10 +20,15 @@ namespace noche
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddMvc();
+            services.AddMvc();
             //start
             // Add functionality to inject IOptions<T>
-            services.AddCors();
+            //services.AddCors(options =>
+            //{
+            //    options.AddPolicy("AllowMyOrigin",
+            //        builder2 => builder2.AllowAnyOrigin().AllowAnyMethod());
+            //});
+
             services.Configure<Nochesettings>(Configuration.GetSection("Nochesettings"));
             services.AddTransient<IProductRepository, ProductsRepository>();
             services.AddTransient<IEntries, EntriesRepository>();
@@ -44,6 +49,10 @@ namespace noche
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors(
+            builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()
+                );
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -52,6 +61,7 @@ namespace noche
 
             app.UseEndpoints(endpoints =>
             {
+
                 endpoints.MapControllers();
             });
         }
