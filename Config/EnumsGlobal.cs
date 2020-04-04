@@ -17,7 +17,7 @@ namespace noche
     public enum CSTATUS
     {
         ACTIVO = 1,
-        INACTIV = 2,
+        INACTIVO = 2,
         ELIMINADO = 3,
         CANCELADO = 4,
     }
