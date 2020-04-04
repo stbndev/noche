@@ -30,6 +30,18 @@ namespace noche.Context
             }
         }
 
+        private decimal _unitary_price;
+        [BsonRepresentation(BsonType.Decimal128)]
+        [BsonRequired]
+        public decimal unitary_price
+        {
+            get { return _unitary_price; }
+            set
+            {
+                _unitary_price = (value > 0) ? Util.Rounding2digits(value) : value;
+            }
+        }
+
         private decimal _quantity;
         [BsonRepresentation(BsonType.Decimal128)]
         [BsonRequired]

@@ -166,6 +166,7 @@ namespace noche.Repository
                 .Set(x => x.idcstatus, values.idcstatus)
                 .Set(x => x.idcompany, values.idcompany)
                 .Set(x => x.unitary_cost, values.unitary_cost)
+                .Set(x => x.unitary_price, values.unitary_price)
                 .Set(x => x.quantity, values.quantity);
 
 
@@ -177,6 +178,7 @@ namespace noche.Repository
                 await _context.Entries.UpdateOneAsync(filter, update);
 
                 product.unitary_cost = values.unitary_cost;
+                product.unitary_price = values.unitary_price;
                 product.existence = product.existence - entries.quantity;
                 product.existence = product.existence + values.quantity;
                 product.maker = values.maker;
