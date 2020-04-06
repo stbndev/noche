@@ -44,6 +44,8 @@ namespace noche.Repository
                 values.identries = ++sequence_value;
                 values.date_add = int.Parse(Util.ConvertToTimestamp());
                 values.total = values.unitary_cost * values.quantity;
+                values.unitary_price = product.unitary_price;
+
                 _context.Entries.InsertOneAsync(values).Wait();
 
                 product.unitary_cost = values.unitary_cost;

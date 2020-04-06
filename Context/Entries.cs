@@ -53,5 +53,17 @@ namespace noche.Context
                 _quantity = (value > 0) ? Util.Rounding2digits(value) : value;
             }
         }
+
+        private decimal _existence;
+        [BsonRepresentation(BsonType.Decimal128)]
+        [BsonRequired]
+        public decimal existence
+        {
+            get { return _existence; }
+            set
+            {
+                _existence = (value > 0) ? Util.Rounding2digits(value) : value;
+            }
+        }
     }
 }
