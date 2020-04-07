@@ -46,12 +46,13 @@ namespace noche.Repository
                 values.total = values.unitary_cost * values.quantity;
                 values.unitary_price = product.unitary_price;
 
-                _context.Entries.InsertOneAsync(values).Wait();
-
                 product.unitary_cost = values.unitary_cost;
                 product.existence = product.existence + values.quantity;
                 product.maker = values.maker;
 
+                values.existence = product.existence;
+
+                _context.Entries.InsertOneAsync(values).Wait();
                 await _productRepository.Update(product);
                 return true;
             }
@@ -158,9 +159,17 @@ namespace noche.Repository
                 var product = await _productRepository.Read(values.idproducts.ToString());
                 var entries = await this.Read(values.identries.ToString());
 
-                FilterDefinition<Entries> filter;
+                FilterDefinition<Entries> filter = Builders<Entries>.Filter.Eq(s => s.identries, values.identries);
+
                 int ds = int.Parse(Util.ConvertToTimestamp());
                 values.total = values.unitary_cost * values.quantity;
+                
+                product.unitary_cost = values.unitary_cost;
+                // product.unitary_price = values.unitary_price;
+                product.existence = product.existence - entries.quantity;
+                product.existence = product.existence + values.quantity;
+                product.maker = values.maker;
+                values.existence = product.existence;
 
                 var update = Builders<Entries>.Update
                 .Set(x => x.total, values.total)
@@ -168,24 +177,12 @@ namespace noche.Repository
                 .Set(x => x.idcstatus, values.idcstatus)
                 .Set(x => x.idcompany, values.idcompany)
                 .Set(x => x.unitary_cost, values.unitary_cost)
-                .Set(x => x.unitary_price, values.unitary_price)
+                // .Set(x => x.unitary_cost, values.unitary_cost)
+                .Set(x => x.existence, values.existence)
                 .Set(x => x.quantity, values.quantity);
 
-
-                if (!string.IsNullOrEmpty(values.Id))
-                    filter = Builders<Entries>.Filter.Eq(s => s.Id, values.Id);
-                else
-                    filter = Builders<Entries>.Filter.Eq(s => s.identries, values.identries);
-
-                await _context.Entries.UpdateOneAsync(filter, update);
-
-                product.unitary_cost = values.unitary_cost;
-                product.unitary_price = values.unitary_price;
-                product.existence = product.existence - entries.quantity;
-                product.existence = product.existence + values.quantity;
-                product.maker = values.maker;
-
                 await _productRepository.Update(product);
+                await _context.Entries.UpdateOneAsync(filter, update);
 
                 var result = await Read(values.identries.ToString());
 

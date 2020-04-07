@@ -58,9 +58,17 @@ namespace noche.Controllers
         {
             ResponseModel rm = new ResponseModel();
             Entries result = new Entries();
-
+            int tmpid = -1;
+            int.TryParse(id, out tmpid);
             try
             {
+
+                if (tmpid > 1)
+                    values.identries = tmpid;
+
+                else if (!string.IsNullOrEmpty(id) && tmpid == -1)
+                    values.Id = id;
+
                 switch (action)
                 {
                     case Action.CREATE:
@@ -83,7 +91,6 @@ namespace noche.Controllers
                         break;
 
                     case Action.UPDATE:
-                        values.Id = id;
                         rm.result = await _repository.Update(values);
                         if (!string.IsNullOrEmpty(rm.result.Id))
                             rm.SetResponse(true, string.Empty);
