@@ -46,7 +46,7 @@ namespace noche.Context
             try
             {
                 var collection = _db.GetCollection<Entries>("entries");
-                result = (from c in collection.AsQueryable<Entries>() select c.idproducts).Max();
+                result = (from c in collection.AsQueryable<Entries>() select c.identries).Max();
                 return result;
             }
             catch (Exception ex)
