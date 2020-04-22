@@ -26,6 +26,47 @@ namespace noche.Context
                 _db = client.GetDatabase(_mongosettings.Value.DatabaseName);
 
         }
+
+        public IMongoCollection<Users> Users
+        {
+            get
+            {
+                return _db.GetCollection<Users>("users");
+            }
+        }
+
+        public IMongoCollection<Rols> Rols
+        {
+            get
+            {
+                return _db.GetCollection<Rols>("rols");
+            }
+        }
+
+        public IMongoCollection<Rol_Operation> Rol_Operation
+        {
+            get
+            {
+                return _db.GetCollection<Rol_Operation>("rol_operation");
+            }
+        }
+
+        public IMongoCollection<Operations> Operations
+        {
+            get
+            {
+                return _db.GetCollection<Operations>("operations");
+            }
+        }
+
+        public IMongoCollection<Modules> Modules
+        {
+            get
+            {
+                return _db.GetCollection<Modules>("modules");
+            }
+        }
+
         public IMongoCollection<Cstatus> Cstatus
         {
             get

@@ -28,7 +28,6 @@ namespace noche.Repository
         private readonly IOptions<Nochesettings> _mongosettings;
         private readonly IProductRepository _productRepository = null;
 
-
         public SalesRepository(IOptions<Nochesettings> settings)
         {
             _mongosettings = settings;
