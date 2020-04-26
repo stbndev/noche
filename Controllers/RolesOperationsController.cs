@@ -11,74 +11,67 @@ namespace noche.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class RolesOperationsController : ControllerBase
     {
-        private readonly IUsers _repository;
+        private readonly IRolesOperations _repository;
 
-        public UsersController(IUsers ius) { _repository = ius; }
+        public RolesOperationsController(IRolesOperations ntrfc) { _repository = ntrfc; }
 
         [HttpPost]
-        public async Task<ResponseModel> Create(Users values)
+        public async Task<ResponseModel> CreateRO(Rol_Operation values)
         {
-            return await executeactionAsync(Action.CREATE, values: values);
+            return await executeactionAsyncRO(Action.CREATE, values: values);
         }
 
         [HttpGet]
-        //public async Task<IEnumerable<Products>> Get()
-        public async Task<ResponseModel> Get()
+        [Route("{id}")]
+        public async Task<ResponseModel> ReadRO(string id)
         {
-            return await executeactionAsync(Action.READALL);
+            return await executeactionAsyncRO(Action.READID, id: id);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ResponseModel> Read(string id)
+        [HttpGet]
+        public async Task<ResponseModel> ReadAllRO()
         {
-            return await executeactionAsync(Action.READID, id: id);
+            return await executeactionAsyncRO(Action.READALL);
         }
 
-
-        [HttpPut("{id}")]
-        public async Task<ResponseModel> Update(string id, Users values)
+        [HttpPut]
+        public async Task<ResponseModel> UpdateRO(Rol_Operation values)
         {
-            return await executeactionAsync(Action.UPDATE, id: id, values: values);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<ResponseModel> Delete(string id)
-        {
-            return await executeactionAsync(Action.DELETE, id: id);
+            return await executeactionAsyncRO(Action.UPDATE, values: values);
         }
 
         [HttpDelete]
-        [Route("{id}/physical")]
-        public async Task<ResponseModel> DeletePhysical(string id)
+        [Route("{id}")]
+        public async Task<ResponseModel> DeleteRO(string id)
         {
-            return await executeactionAsync(Action.DELETEPHYSICAL, id: id);
+            return await executeactionAsyncRO(Action.DELETE, id: id);
         }
 
-        private async Task<ResponseModel> executeactionAsync(Action action, string id = "", Users values = null)
+        private async Task<ResponseModel> executeactionAsyncRO(Action action, string id = "", Rol_Operation values = null)
         {
             ResponseModel rm = new ResponseModel();
-            Users result = new Users();
+            var result = new Rol_Operation();
 
             try
             {
                 switch (action)
                 {
                     case Action.CREATE:
-                        rm.response = await _repository.Create(values);
+                        rm.response = await _repository.CreateRO(values);
                         rm.result = values;
                         rm.SetResponse(rm.response, string.Empty);
                         break;
 
                     case Action.READID:
-                        rm.result = await _repository.Read(id);
+                        rm.result = await _repository.ReadRO(id);
                         if (!string.IsNullOrEmpty(rm.result.Id))
                             rm.SetResponse(true, string.Empty);
                         break;
 
                     case Action.READALL:
-                        var list = await _repository.GetAll();
+                        var list = await _repository.GetAllRO();
                         rm.response = list.Count() > 0 ? true : false;
                         rm.result = list;
                         rm.SetResponse(rm.response, string.Empty);
@@ -86,13 +79,13 @@ namespace noche.Controllers
 
                     case Action.UPDATE:
                         values.Id = id;
-                        rm.result = await _repository.Update(values);
+                        rm.result = await _repository.UpdateRO(values);
                         if (!string.IsNullOrEmpty(rm.result.Id))
                             rm.SetResponse(true, string.Empty);
                         break;
 
                     case Action.DELETE:
-                        rm.response = await _repository.Delete(id);
+                        rm.response = await _repository.DeleteRO(id);
                         rm.SetResponse(rm.response, string.Empty);
                         break;
 
@@ -112,5 +105,6 @@ namespace noche.Controllers
             }
             return rm;
         }
+
     }
 }

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using noche.Config;
 using noche.Context;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace noche.Repository
 {
@@ -16,14 +16,7 @@ namespace noche.Repository
         Task<bool> Create(Users values);
         Task<IEnumerable<Users>> GetAll();
     }
-    public interface IRoles
-    {
-        Task<bool> Delete(string id);
-        Task<Rols> Update(Rols values);
-        Task<Rols> Read(string id);
-        Task<bool> Create(Rols values);
-        Task<IEnumerable<Rols>> GetAll();
-    }
+
 
     public interface IRol_Operation
     {
@@ -34,22 +27,42 @@ namespace noche.Repository
         Task<IEnumerable<Rol_Operation>> GetAll();
     }
 
-    public interface IOperations
+    public class RolOperationsRepository : IRol_Operation
     {
-        Task<bool> Delete(string id);
-        Task<Operations> Update(Operations values);
-        Task<Operations> Read(string id);
-        Task<bool> Create(Operations values);
-        Task<IEnumerable<Operations>> GetAll();
-    }
+        private readonly MongoContext _context = null;
+        private readonly IOptions<Nochesettings> _mongosettings;
+        public async Task<bool> Create(Rol_Operation values)
+        {
+            try
+            {
+                _context.Rol_Operation.InsertOneAsync(values).Wait();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
 
-    public interface IModules
-    {
-        Task<bool> Delete(string id);
-        Task<Modules> Update(Modules values);
-        Task<Modules> Read(string id);
-        Task<bool> Create(Modules values);
-        Task<IEnumerable<Modules>> GetAll();
+        public Task<bool> Delete(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IEnumerable<Rol_Operation>> GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Rol_Operation> Read(string id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Rol_Operation> Update(Rol_Operation values)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class UsersRepository : IUsers
@@ -68,7 +81,7 @@ namespace noche.Repository
         {
             try
             {
-                values. date_add = int.Parse(Util.ConvertToTimestamp());
+                values.date_add = int.Parse(Util.ConvertToTimestamp());
                 _context.Users.InsertOneAsync(values).Wait();
                 return true;
             }
@@ -78,52 +91,67 @@ namespace noche.Repository
             }
         }
 
-        public Task<bool> Delete(string id)
+        public async Task<bool> Delete(string id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                FilterDefinition<Users> filter = Builders<Users>.Filter.Eq(s => s.Id, id);
+                var delete_result = await _context.Users.DeleteOneAsync(filter);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public Task<IEnumerable<Users>> GetAll()
+        public async Task<IEnumerable<Users>> GetAll()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _context.Users.Find(_ => true).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public Task<Users> Read(string id)
+        public async Task<Users> Read(string id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _context.Users.Find(x => x.Id == id).FirstAsync<Users>();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public Task<Users> Update(Users values)
+        public async Task<Users> Update(Users values)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var update = Builders<Users>.Update
+                .Set(x => x.name, values.name)
+                .Set(x => x.email, values.email)
+                .Set(x => x.password, values.password)
+                .Set(x => x.idrol, values.idrol);
+
+                FilterDefinition<Users> filter = Builders<Users>.Filter.Eq(s => s.Id, values.Id);
+                await _context.Users.UpdateOneAsync(filter, update);
+                var result = await Read(values.Id);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 
-    public class RolesRepository : IRoles
-    {
-        public Task<bool> Create(Rols values)
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task<bool> Delete(string id)
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task<IEnumerable<Rols>> GetAll()
-        {
-            throw new NotImplementedException();
-        }
 
-        public Task<Rols> Read(string id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<Rols> Update(Rols values)
-        {
-            throw new NotImplementedException();
-        }
-    }
 }

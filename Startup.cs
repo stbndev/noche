@@ -30,6 +30,10 @@ namespace noche
             //});
 
             services.Configure<Nochesettings>(Configuration.GetSection("Nochesettings"));
+            services.AddTransient<IRolesOperations, RolesOperationsRepository>();
+            services.AddTransient<IRoles, RolesRepository>();
+            services.AddTransient<IModules, ModulesRepository>(); 
+            services.AddTransient<IOperations, OperationsRepository>();
             services.AddTransient<IUsers, UsersRepository>();
             services.AddTransient<IProductRepository, ProductsRepository>();
             services.AddTransient<IEntries, EntriesRepository>();

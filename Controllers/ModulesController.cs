@@ -11,14 +11,14 @@ namespace noche.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class ModulesController : ControllerBase
     {
-        private readonly IUsers _repository;
+        private readonly IModules _repository;
 
-        public UsersController(IUsers ius) { _repository = ius; }
+        public ModulesController(IModules ius) { _repository = ius; }
 
         [HttpPost]
-        public async Task<ResponseModel> Create(Users values)
+        public async Task<ResponseModel> Create(Modules values)
         {
             return await executeactionAsync(Action.CREATE, values: values);
         }
@@ -38,7 +38,7 @@ namespace noche.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<ResponseModel> Update(string id, Users values)
+        public async Task<ResponseModel> Update(string id, Modules values)
         {
             return await executeactionAsync(Action.UPDATE, id: id, values: values);
         }
@@ -56,10 +56,10 @@ namespace noche.Controllers
             return await executeactionAsync(Action.DELETEPHYSICAL, id: id);
         }
 
-        private async Task<ResponseModel> executeactionAsync(Action action, string id = "", Users values = null)
+        private async Task<ResponseModel> executeactionAsync(Action action, string id = "", Modules values = null)
         {
             ResponseModel rm = new ResponseModel();
-            Users result = new Users();
+            Modules result = new Modules();
 
             try
             {

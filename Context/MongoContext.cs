@@ -35,11 +35,11 @@ namespace noche.Context
             }
         }
 
-        public IMongoCollection<Rols> Rols
+        public IMongoCollection<Roles> Roles
         {
             get
             {
-                return _db.GetCollection<Rols>("rols");
+                return _db.GetCollection<Roles>("roles");
             }
         }
 
