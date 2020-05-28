@@ -20,17 +20,27 @@ namespace noche.Repository
     {
         private readonly MongoContext _context = null;
         private readonly IOptions<Nochesettings> _mongosettings;
+        private readonly IRoles _rolesRepo = null;
+        private readonly IOperations _operationsRepo = null;
+
+
 
         public RolesOperationsRepository(IOptions<Nochesettings> settings)
         {
             _mongosettings = settings;
             _context = new MongoContext(settings);
+            _rolesRepo = new RolesRepository(settings);
+            _operationsRepo = new OperationsRepository(settings);
         }
 
         public async Task<bool> CreateRO(Rol_Operation values)
         {
             try
             {
+                var rolCheck = await _rolesRepo.Read(values.idrol);
+                var operationCheck = await _operationsRepo.Read(values.idoperation);
+                if (rolCheck == null || operationCheck == null)
+                    throw new Exception(" Rol y/o Operacion inexsienten");
                 _context.Rol_Operation.InsertOneAsync(values).Wait();
                 return true;
             }

@@ -10,6 +10,8 @@ namespace noche.Repository
 {
     public interface IUsers
     {
+        Task<Users> Signin(Users users);
+
         Task<bool> Delete(string id);
         Task<Users> Update(Users values);
         Task<Users> Read(string id);
@@ -77,6 +79,19 @@ namespace noche.Repository
             _context = new MongoContext(settings);
 
         }
+
+        public async Task<Users> Signin(Users users)
+        {
+            try
+            {
+                return await _context.Users.Find(x => x.email == users.email && x.password == users.password ).FirstAsync<Users>();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
         public async Task<bool> Create(Users values)
         {
             try

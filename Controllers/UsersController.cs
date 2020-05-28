@@ -18,6 +18,25 @@ namespace noche.Controllers
         public UsersController(IUsers ius) { _repository = ius; }
 
         [HttpPost]
+        [Route("signin")]
+
+        public async Task<ResponseModel> Login(Users values)
+        {
+            ResponseModel rm = new ResponseModel();
+            // Users result = new Users();
+            try
+            {
+                rm.result = await _repository.Signin(values);
+                rm.SetResponse(true);
+            }
+            catch (Exception ex)
+            {
+                rm.SetResponse(false, "Revisar usuario/contraseña " + ex.Message);
+            }
+
+            return rm;
+        }
+        [HttpPost]
         public async Task<ResponseModel> Create(Users values)
         {
             return await executeactionAsync(Action.CREATE, values: values);
@@ -65,6 +84,7 @@ namespace noche.Controllers
             {
                 switch (action)
                 {
+
                     case Action.CREATE:
                         rm.response = await _repository.Create(values);
                         rm.result = values;
