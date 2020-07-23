@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -5,7 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using noche.Config;
 using noche.Repository;
-
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
 namespace noche
 {
     public class Startup
@@ -20,7 +22,26 @@ namespace noche
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            // start jtw
+            var key = Encoding.ASCII.GetBytes(Configuration.GetValue<string>("SecretKey"));
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer( x2=> {
+                x2.RequireHttpsMetadata = false;
+                x2.SaveToken = true;
+                x2.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+            // end jwt
+            
             //start
             // Add functionality to inject IOptions<T>
             //services.AddCors(options =>
@@ -43,6 +64,8 @@ namespace noche
             services.AddTransient<IDocFile, DocFileRepository>();
             // end
             services.AddControllers();
+            services.AddMvc();
+
 
         }
 
@@ -53,6 +76,7 @@ namespace noche
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseAuthentication();
 
             app.UseCors(
             builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()
@@ -69,6 +93,9 @@ namespace noche
 
                 endpoints.MapControllers();
             });
+            // jwt start
+            //app.UseMvc();
+            // jwt end
         }
     }
 }

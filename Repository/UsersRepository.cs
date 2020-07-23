@@ -10,7 +10,10 @@ namespace noche.Repository
 {
     public interface IUsers
     {
+        Users Authsignin(Users users);
+
         Task<Users> Signin(Users users);
+
 
         Task<bool> Delete(string id);
         Task<Users> Update(Users values);
@@ -80,11 +83,22 @@ namespace noche.Repository
 
         }
 
+        public Users Authsignin(Users users)
+        {
+            try
+            {
+                return _context.Users.Find(x => x.email == users.email && x.password == users.password).First<Users>();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public async Task<Users> Signin(Users users)
         {
             try
             {
-                return await _context.Users.Find(x => x.email == users.email && x.password == users.password ).FirstAsync<Users>();
+                return await _context.Users.Find(x => x.email == users.email && x.password == users.password).FirstAsync<Users>();
             }
             catch (Exception ex)
             {

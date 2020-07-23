@@ -104,9 +104,7 @@ namespace noche.Repository
                 FilterDefinition<Products> filter = (tmpid > 0) ? Builders<Products>.Filter.Eq(s => s.idproducts, tmpid) : Builders<Products>.Filter.Eq(s => s.Id, values.Id);
 
                 await _context.Products.UpdateOneAsync(filter, update);
-
-                var result = await Read(values.idproducts.ToString());
-
+                var result = tmpid > 0 ?  await Read(tmpid.ToString()) : await Read(values.Id);
                 return result;
             }
             catch (Exception ex)
