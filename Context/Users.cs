@@ -28,6 +28,8 @@ namespace noche.Context
         [BsonDefaultValue(0)]
         public int date_add { get; set; }
 
+        public Companies company { get; set; }
+
     }
 
 
