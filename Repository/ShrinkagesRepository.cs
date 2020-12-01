@@ -11,12 +11,12 @@ namespace noche.Repository
 {
     public interface IShrinkage
     {
-        Task<bool> DeletePhysical(string id);
-        Task<bool> Delete(string id);
+        Task<int> DeletePhysical(string id);
+        Task<int> Delete(string id);
 
         Task<Shrinkages> Update(Shrinkages values);
         Task<Shrinkages> Read(string id);
-        Task<bool> Create(Shrinkages products);
+        Task<int> Create(Shrinkages products);
         Task<IEnumerable<Shrinkages>> GetAll();
     }
     public class ShrinkagesRepository : IShrinkage
@@ -31,7 +31,7 @@ namespace noche.Repository
             _context = new MongoContext(settings);
             _productRepository = new ProductsRepository(settings);
         }
-        public async Task<bool> Create(Shrinkages values)
+        public async Task<int> Create(Shrinkages values)
         {
             decimal total = 0;
             try
@@ -49,7 +49,7 @@ namespace noche.Repository
                 }
                 values.total = total;
                 _context.Shrinkages.InsertOneAsync(values).Wait();
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {
@@ -57,7 +57,7 @@ namespace noche.Repository
             }
         }
 
-        public async Task<bool> Delete(string id)
+        public async Task<int> Delete(string id)
         {
             int tmpid = 0;
             try
@@ -71,7 +71,7 @@ namespace noche.Repository
                 FilterDefinition<Shrinkages> filter = (tmpid > 0) ? Builders<Shrinkages>.Filter.Eq(s => s.idshrinkages, tmpid) : Builders<Shrinkages>.Filter.Eq(s => s.Id, id);
 
                 await _context.Shrinkages.UpdateOneAsync(filter, update);
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {
@@ -79,7 +79,7 @@ namespace noche.Repository
             }
         }
 
-        public async Task<bool> DeletePhysical(string id)
+        public async Task<int> DeletePhysical(string id)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace noche.Repository
                 int.TryParse(id, out tmpid);
                 FilterDefinition<Shrinkages> filter = (tmpid > 0) ? Builders<Shrinkages>.Filter.Eq(s => s.idshrinkages, tmpid) : Builders<Shrinkages>.Filter.Eq(s => s.Id, id);
                 var delete_result = await _context.Shrinkages.DeleteOneAsync(filter);
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {

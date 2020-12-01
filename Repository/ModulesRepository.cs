@@ -10,10 +10,10 @@ namespace noche.Repository
 {
     public interface IModules
     {
-        Task<bool> Delete(string id);
+        Task<int> Delete(string id);
         Task<Modules> Update(Modules values);
         Task<Modules> Read(string id);
-        Task<bool> Create(Modules values);
+        Task<int> Create(Modules values);
         Task<IEnumerable<Modules>> GetAll();
     }
     public class ModulesRepository : IModules
@@ -28,12 +28,12 @@ namespace noche.Repository
 
         }
 
-        public async Task<bool> Create(Modules values)
+        public async Task<int> Create(Modules values)
         {
             try
             {
                 _context.Modules.InsertOneAsync(values).Wait();
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {
@@ -41,13 +41,13 @@ namespace noche.Repository
             }
         }
 
-        public async Task<bool> Delete(string id)
+        public async Task<int> Delete(string id)
         {
             try
             {
                 FilterDefinition<Modules> filter = Builders<Modules>.Filter.Eq(s => s.Id, id);
                 var delete_result = await _context.Modules.DeleteOneAsync(filter);
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {

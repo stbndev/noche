@@ -12,12 +12,12 @@ namespace noche.Repository
     public interface IProductRepository
     {
         //Physical
-        Task<bool> DeletePhysical(string id);
-        Task<bool> Delete(string id);
+        Task<int> DeletePhysical(string id);
+        Task<int> Delete(string id);
 
         Task<Products> Update(Products values);
         Task<Products> Read(string id);
-        Task<bool> Create(Products products);
+        Task<int> Create(Products products);
         Task<IEnumerable<Products>> GetAll();
         //Task<bool> Create(Products products);
 
@@ -45,7 +45,7 @@ namespace noche.Repository
                 throw ex;
             }
         }
-        public async Task<bool> Create(Products products)
+        public async Task<int> Create(Products products)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace noche.Repository
                 products.idproducts = ++sequence_value;
                 products.date_add = int.Parse(Util.ConvertToTimestamp());
                 _context.Products.InsertOneAsync(products).Wait();
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {
@@ -113,7 +113,7 @@ namespace noche.Repository
             }
         }
 
-        public async Task<bool> DeletePhysical(string id)
+        public async Task<int> DeletePhysical(string id)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace noche.Repository
                 FilterDefinition<Products> filter = (tmpid > 0) ? Builders<Products>.Filter.Eq(s => s.idproducts, tmpid) : Builders<Products>.Filter.Eq(s => s.Id, id);
                 var delete_result = await _context.Products.DeleteOneAsync(filter);
 
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {
@@ -130,7 +130,7 @@ namespace noche.Repository
             }
         }
 
-        public async Task<bool> Delete(string id)
+        public async Task<int> Delete(string id)
         {
             int tmpid = 0;
             try
@@ -143,7 +143,7 @@ namespace noche.Repository
                 int.TryParse(id, out tmpid);
                 FilterDefinition<Products> filter = (tmpid > 0) ? Builders<Products>.Filter.Eq(s => s.idproducts, tmpid) : Builders<Products>.Filter.Eq(s => s.Id, id);
                 await _context.Products.UpdateOneAsync(filter, update);
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {

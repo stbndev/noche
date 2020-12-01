@@ -8,7 +8,7 @@ using System.Linq;
 namespace noche.Controllers
 {
     [ApiController]
-    [Authorize]
+    //[Authorize]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {

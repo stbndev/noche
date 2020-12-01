@@ -18,7 +18,7 @@ namespace noche.Controllers
     public class DocFileController : ControllerBase
     {
         private DBX dbx { get; set; } = new DBX();
-        private ResponseModel rm { get; set; } = new ResponseModel();
+        private ResponseNocheServices rm { get; set; } = new ResponseNocheServices();
 
         private readonly IDocFile _repository;
 
@@ -37,7 +37,7 @@ namespace noche.Controllers
         }
 
         [HttpPost]
-        public async Task<ResponseModel> Post(ICollection<IFormFile> file)
+        public async Task<ResponseNocheServices> Post(ICollection<IFormFile> file)
         {
 
             foreach (var item in file)
@@ -82,22 +82,22 @@ namespace noche.Controllers
                     url = url.Replace("?dl=0", "");
                     dbx.linkDBX = url;
                     dbx.flag = true;
-                    rm.href = result.Url;
-                    rm.response = true;
-                    rm.result = dbx.linkDBX;
-                    rm.SetResponse(rm.response);
+                    rm.Href = result.Url;
+                    rm.Flag = 1;
+                    rm.Data = dbx.linkDBX;
+                    rm.SetResponse(rm.Flag);
                 }
             }
             catch (DropboxException dex) 
             {
-                rm.message = "Error Fatal 404: " + dex.Message + dex.InnerException.Message;
+                rm.Message = "Error Fatal 404: " + dex.Message + dex.InnerException.Message;
 
             }
             catch (Exception ex)
             {
-                rm.message += "Error Fatal 404: " + ex.Message + ex.InnerException.Message;
+                rm.Message += "Error Fatal 404: " + ex.Message + ex.InnerException.Message;
 
-                rm.response = false;
+                rm.Flag = -1;
             }
         }
     }

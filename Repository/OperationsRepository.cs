@@ -10,10 +10,10 @@ namespace noche.Repository
 {
     public interface IOperations
     {
-        Task<bool> Delete(string id);
+        Task<int> Delete(string id);
         Task<Operations> Update(Operations values);
         Task<Operations> Read(string id);
-        Task<bool> Create(Operations values);
+        Task<int> Create(Operations values);
         Task<IEnumerable<Operations>> GetAll();
     }
 
@@ -28,12 +28,12 @@ namespace noche.Repository
             _context = new MongoContext(settings);
         }
 
-        public async Task<bool> Create(Operations values)
+        public async Task<int> Create(Operations values)
         {
             try
             {
                 _context.Operations.InsertOneAsync(values).Wait();
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {
@@ -41,7 +41,7 @@ namespace noche.Repository
             }
         }
 
-        public async Task<bool> Delete(string id)
+        public async Task<int> Delete(string id)
         {
             try
             {
@@ -49,7 +49,7 @@ namespace noche.Repository
                 int.TryParse(id, out tmpid);
                 FilterDefinition<Operations> filter = Builders<Operations>.Filter.Eq(s => s.Id, id);
                 var delete_result = await _context.Operations.DeleteOneAsync(filter);
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {

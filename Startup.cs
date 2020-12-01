@@ -12,6 +12,7 @@ namespace noche
 {
     public class Startup
     {
+        readonly string MyCors = "MyCors";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -29,7 +30,8 @@ namespace noche
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer( x2=> {
+            }).AddJwtBearer(x2 =>
+            {
                 x2.RequireHttpsMetadata = false;
                 x2.SaveToken = true;
                 x2.TokenValidationParameters = new TokenValidationParameters
@@ -41,7 +43,7 @@ namespace noche
                 };
             });
             // end jwt
-            
+
             //start
             // Add functionality to inject IOptions<T>
             //services.AddCors(options =>
@@ -49,11 +51,20 @@ namespace noche
             //    options.AddPolicy("AllowMyOrigin",
             //        builder2 => builder2.AllowAnyOrigin().AllowAnyMethod());
             //});
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyCors,
+                                   builder =>
+                                   {
+                                       builder.WithOrigins("*").AllowAnyHeader()
+                                                  .AllowAnyMethod();
+                                   });
+            });
 
             services.Configure<Nochesettings>(Configuration.GetSection("Nochesettings"));
             services.AddTransient<IRolesOperations, RolesOperationsRepository>();
             services.AddTransient<IRoles, RolesRepository>();
-            services.AddTransient<IModules, ModulesRepository>(); 
+            services.AddTransient<IModules, ModulesRepository>();
             services.AddTransient<IOperations, OperationsRepository>();
             services.AddTransient<IUsers, UsersRepository>();
             services.AddTransient<IProductRepository, ProductsRepository>();
@@ -78,13 +89,12 @@ namespace noche
             }
             app.UseAuthentication();
 
-            app.UseCors(
-            builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()
-                );
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(MyCors);
 
             app.UseAuthorization();
 

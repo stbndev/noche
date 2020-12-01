@@ -10,11 +10,11 @@ namespace noche.Repository
 {
     public interface IRolesOperations
     {
-        Task<bool> DeleteRO(string id);
+        Task<int> DeleteRO(string id);
         Task<Rol_Operation> UpdateRO(Rol_Operation values);
         Task<Rol_Operation> ReadRO(string id);
         Task<IEnumerable<Rol_Operation>> GetAllRO();
-        Task<bool> CreateRO(Rol_Operation values);
+        Task<int> CreateRO(Rol_Operation values);
     }
     public class RolesOperationsRepository : IRolesOperations
     {
@@ -33,7 +33,7 @@ namespace noche.Repository
             _operationsRepo = new OperationsRepository(settings);
         }
 
-        public async Task<bool> CreateRO(Rol_Operation values)
+        public async Task<int> CreateRO(Rol_Operation values)
         {
             try
             {
@@ -42,20 +42,20 @@ namespace noche.Repository
                 if (rolCheck == null || operationCheck == null)
                     throw new Exception(" Rol y/o Operacion inexsienten");
                 _context.Rol_Operation.InsertOneAsync(values).Wait();
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-        public async Task<bool> DeleteRO(string id)
+        public async Task<int> DeleteRO(string id)
         {
             try
             {
                 FilterDefinition<Rol_Operation> filter = Builders<Rol_Operation>.Filter.Eq(s => s.Id, id);
                 var delete_result = await _context.Rol_Operation.DeleteOneAsync(filter);
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {

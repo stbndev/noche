@@ -13,12 +13,12 @@ namespace noche.Repository
     public interface ISales
     {
         //Physical
-        Task<bool> DeletePhysical(string id);
-        Task<bool> Delete(string id);
+        Task<int> DeletePhysical(string id);
+        Task<int> Delete(string id);
 
         Task<Sales> Update(Sales values);
         Task<Sales> Read(string id);
-        Task<bool> Create(Sales values);
+        Task<int> Create(Sales values);
         Task<IEnumerable<Sales>> GetAll();
 
     }
@@ -35,7 +35,7 @@ namespace noche.Repository
             _productRepository = new ProductsRepository(settings);
         }
 
-        public async Task<bool> Create(Sales values)
+        public async Task<int> Create(Sales values)
         {
             decimal total = 0;
             try
@@ -58,7 +58,7 @@ namespace noche.Repository
 
                 values.total = total;
                 _context.Sales.InsertOneAsync(values).Wait();
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {
@@ -66,7 +66,7 @@ namespace noche.Repository
             }
         }
 
-        public async Task<bool> Delete(string id)
+        public async Task<int> Delete(string id)
         {
             int tmpid = 0;
             try
@@ -83,7 +83,7 @@ namespace noche.Repository
 
                 await _context.Sales.UpdateOneAsync(filter, update);
 
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {
@@ -91,7 +91,7 @@ namespace noche.Repository
             }
         }
 
-        public async Task<bool> DeletePhysical(string id)
+        public async Task<int> DeletePhysical(string id)
         {
             try
             {
@@ -106,7 +106,7 @@ namespace noche.Repository
 
                 var delete_result = await _context.Sales.DeleteOneAsync(filter);
 
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace noche.Context
 {
+    [BsonIgnoreExtraElements]
     public class Products : EntityBase
     {
         [BsonRequired]
@@ -36,6 +37,11 @@ namespace noche.Context
             get { return _idproducts; }
             set { _idproducts = value; }
         }
+
+        // [BsonRequired]
+        [BsonDefaultValue(0)]
+        // [BsonIgnore]
+        public int bestseller { get; set; }
 
 
         private decimal _unitary_price;

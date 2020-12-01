@@ -15,20 +15,20 @@ namespace noche.Repository
         Task<Users> Signin(Users users);
 
 
-        Task<bool> Delete(string id);
+        Task<int> Delete(string id);
         Task<Users> Update(Users values);
         Task<Users> Read(string id);
-        Task<bool> Create(Users values);
+        Task<int> Create(Users values);
         Task<IEnumerable<Users>> GetAll();
     }
 
 
     public interface IRol_Operation
     {
-        Task<bool> Delete(string id);
+        Task<int> Delete(string id);
         Task<Rol_Operation> Update(Rol_Operation values);
         Task<Rol_Operation> Read(string id);
-        Task<bool> Create(Rol_Operation values);
+        Task<int> Create(Rol_Operation values);
         Task<IEnumerable<Rol_Operation>> GetAll();
     }
 
@@ -36,12 +36,12 @@ namespace noche.Repository
     {
         private readonly MongoContext _context = null;
         private readonly IOptions<Nochesettings> _mongosettings;
-        public async Task<bool> Create(Rol_Operation values)
+        public async Task<int> Create(Rol_Operation values)
         {
             try
             {
                 _context.Rol_Operation.InsertOneAsync(values).Wait();
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {
@@ -49,7 +49,7 @@ namespace noche.Repository
             }
         }
 
-        public Task<bool> Delete(string id)
+        public Task<int> Delete(string id)
         {
             throw new NotImplementedException();
         }
@@ -106,13 +106,13 @@ namespace noche.Repository
             }
         }
 
-        public async Task<bool> Create(Users values)
+        public async Task<int> Create(Users values)
         {
             try
             {
                 values.date_add = int.Parse(Util.ConvertToTimestamp());
                 _context.Users.InsertOneAsync(values).Wait();
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {
@@ -120,13 +120,13 @@ namespace noche.Repository
             }
         }
 
-        public async Task<bool> Delete(string id)
+        public async Task<int> Delete(string id)
         {
             try
             {
                 FilterDefinition<Users> filter = Builders<Users>.Filter.Eq(s => s.Id, id);
                 var delete_result = await _context.Users.DeleteOneAsync(filter);
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {

@@ -11,12 +11,12 @@ namespace noche.Repository
     public interface IEntries
     {
         //Physical
-        Task<bool> DeletePhysical(string id);
-        Task<bool> Delete(string id);
+        Task<int> DeletePhysical(string id);
+        Task<int> Delete(string id);
 
         Task<Entries> Update(Entries values);
         Task<Entries> Read(string id);
-        Task<bool> Create(Entries products);
+        Task<int> Create(Entries products);
         Task<IEnumerable<Entries>> GetAll();
 
     }
@@ -34,7 +34,7 @@ namespace noche.Repository
             _productRepository = new ProductsRepository(settings);
         }
 
-        public async Task<bool> Create(Entries values)
+        public async Task<int> Create(Entries values)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace noche.Repository
 
                 _context.Entries.InsertOneAsync(values).Wait();
                 await _productRepository.Update(product);
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {
@@ -63,7 +63,7 @@ namespace noche.Repository
             }
         }
 
-        public async Task<bool> Delete(string id)
+        public async Task<int> Delete(string id)
         {
             int tmpid = 0;
             try
@@ -87,7 +87,7 @@ namespace noche.Repository
                 product.existence = product.existence - entries.quantity;
                 await _productRepository.Update(product);
                 await _context.Entries.UpdateOneAsync(filter, update);
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {
@@ -95,7 +95,7 @@ namespace noche.Repository
             }
         }
 
-        public async Task<bool> DeletePhysical(string id)
+        public async Task<int> DeletePhysical(string id)
         {
             try
             {
@@ -115,7 +115,7 @@ namespace noche.Repository
 
                 await _productRepository.Update(product);
                 var delete_result = await _context.Entries.DeleteOneAsync(filter);
-                return true;
+                return 1;
             }
             catch (Exception ex)
             {
@@ -164,7 +164,7 @@ namespace noche.Repository
 
                 int ds = int.Parse(Util.ConvertToTimestamp());
                 values.total = values.unitary_cost * values.quantity;
-                
+
                 product.unitary_cost = values.unitary_cost;
                 // product.unitary_price = values.unitary_price;
                 product.existence = product.existence - entries.quantity;

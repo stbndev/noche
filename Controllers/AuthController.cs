@@ -34,15 +34,15 @@ namespace noche.Controllers
         [HttpPost]
         [Route("login")]
 
-        public ResponseModel Login(Users model)
+        public ResponseNocheServices Login(Users model)
         {
             // login start
-            ResponseModel rm = new ResponseModel();
+            ResponseNocheServices rm = new ResponseNocheServices();
             // Users result = new Users();
             try
             {
-                rm.result = _repository.Authsignin(model);
-                rm.SetResponse(true);
+                rm.Data = _repository.Authsignin(model);
+                rm.SetResponse(1);
 
                 // login end
 
@@ -55,7 +55,7 @@ namespace noche.Controllers
                 var claims = new ClaimsIdentity(new[]
                 {
                   // new Claim("sub", "Alice"),
-                  new Claim("data" ,JsonConvert.SerializeObject(rm.result)),
+                  new Claim("data" ,JsonConvert.SerializeObject(rm.Data)),
                 });
 
 
@@ -72,13 +72,13 @@ namespace noche.Controllers
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var createdToken = tokenHandler.CreateToken(tokenDescriptor);
                 // tokenHandler.WriteToken(createdToken);
-                rm.message = (tokenHandler.WriteToken(createdToken));
+                rm.Message = (tokenHandler.WriteToken(createdToken));
             }
 
             catch (Exception ex)
             {
                 //return BadRequest("Revisar usuario/contraseña " + ex.Message);
-                rm.SetResponse(false, "Revisar usuario/contraseña " + ex.Message);
+                rm.SetResponse(-1, "Revisar usuario/contraseña " + ex.Message);
             }
 
             return rm;
