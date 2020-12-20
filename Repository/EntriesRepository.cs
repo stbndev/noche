@@ -45,12 +45,14 @@ namespace noche.Repository
                 values.date_add = int.Parse(Util.ConvertToTimestamp());
                 values.date_set = 0;
                 values.total = values.unitary_cost * values.quantity;
-                values.unitary_price = product.unitary_price;
-
+                //values.unitary_price = product.unitary_price;
+               // values.unitary_cost = product.unitary_cost;
+                // set product 
                 product.unitary_cost = values.unitary_cost;
                 product.existence = product.existence + values.quantity;
                 product.maker = values.maker;
-
+                product.unitary_price = values.unitary_price;
+                product.idcstatus = values.idcstatus;
                 values.existence = product.existence;
 
                 _context.Entries.InsertOneAsync(values).Wait();
@@ -166,7 +168,8 @@ namespace noche.Repository
                 values.total = values.unitary_cost * values.quantity;
 
                 product.unitary_cost = values.unitary_cost;
-                // product.unitary_price = values.unitary_price;
+                product.unitary_price = values.unitary_price;
+                product.idcstatus = values.idcstatus;
                 product.existence = product.existence - entries.quantity;
                 product.existence = product.existence + values.quantity;
                 product.maker = values.maker;
