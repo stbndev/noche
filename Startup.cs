@@ -45,33 +45,29 @@ namespace noche
             // end jwt
 
             //start
-            // Add functionality to inject IOptions<T>
-            //services.AddCors(options =>
-            //{
-            //    options.AddPolicy("AllowMyOrigin",
-            //        builder2 => builder2.AllowAnyOrigin().AllowAnyMethod());
-            //});
+           
             services.AddCors(options =>
             {
                 options.AddPolicy(name: MyCors,
                                    builder =>
                                    {
-                                       builder.WithOrigins("*").AllowAnyHeader()
-                                                  .AllowAnyMethod();
+                                       builder.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
                                    });
             });
 
             services.Configure<Nochesettings>(Configuration.GetSection("Nochesettings"));
+            services.AddScoped<ISales, SalesRepository>();
             services.AddTransient<IRolesOperations, RolesOperationsRepository>();
             services.AddTransient<IRoles, RolesRepository>();
             services.AddTransient<IModules, ModulesRepository>();
             services.AddTransient<IOperations, OperationsRepository>();
             services.AddTransient<IUsers, UsersRepository>();
+            // services.AddTransient<IUsers, UserExitsAttribute>();
+
             services.AddTransient<IProductRepository, ProductsRepository>();
             services.AddTransient<IEntries, EntriesRepository>();
             services.AddTransient<ICstatus, CstatusRepository>();
-            services.AddTransient<ISales, SalesRepository>();
-            services.AddTransient<IShrinkage, ShrinkagesRepository>();
+           services.AddTransient<IShrinkage, ShrinkagesRepository>();
             services.AddTransient<IDocFile, DocFileRepository>();
             // end
             services.AddControllers();

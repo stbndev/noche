@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using noche.Context;
+using noche.Filters;
+using noche.Helpers;
 using noche.Models;
 using noche.Repository;
 using System;
@@ -11,6 +13,7 @@ namespace noche.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[TypeFilter(typeof(ExceptionManager))]
     public class SalesController : ControllerBase
     {
         private readonly ISales _repository;
@@ -36,6 +39,15 @@ namespace noche.Controllers
             return await executeactionAsync(Action.CREATE, values: values);
         }
 
+        //[HttpPost]
+        //[Route("test")]
+        //public async Task<ResponseNocheServices> Create(SalesRequest values)
+        //{
+
+        //    return null;
+        //    //return await executeactionAsync(Action.CREATE, values: values);
+        //}
+
         [HttpPut("{id}")]
         public async Task<ResponseNocheServices> Update(string id, Sales values)
         {
@@ -58,7 +70,6 @@ namespace noche.Controllers
         {
             ResponseNocheServices rm = new ResponseNocheServices();
             Sales result = new Sales();
-
             try
             {
                 switch (action)
@@ -77,7 +88,7 @@ namespace noche.Controllers
 
                     case Action.READALL:
                         var list = await _repository.GetAll();
-                        rm.Flag = list.Count() > 0 ? 1: 0;
+                        rm.Flag = list.Count() > 0 ? 1 : 0;
                         rm.Data = list;
                         rm.SetResponse(rm.Flag, string.Empty);
                         break;

@@ -2,6 +2,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using noche.Repository;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace noche.Context
 {
@@ -9,12 +10,20 @@ namespace noche.Context
     {
         [BsonRequired]
         [BsonRepresentation(BsonType.Int32)]
+        //[Range(1, double.MaxValue, ErrorMessage = " * Id de venta es necesario")]
         public int idsales { get; set; }
+
+        [BsonRequired]
+        [Required(AllowEmptyStrings = false, ErrorMessage = "Id de usuario es necesario")]
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        [UsersExists(ErrorMessage =" * Verificar Cliente")]
+        public  string  idusers{ get; set; }
 
         [BsonRequired]
         [BsonRepresentation(BsonType.Decimal128)]
         public decimal total { get; set; }
 
+        [MinLength(1,ErrorMessage ="Debe existir detalles de venta")]
         public List<SalesDetails> details { get; set; }
 
     }

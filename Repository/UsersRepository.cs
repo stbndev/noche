@@ -1,9 +1,11 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using noche.Config;
 using noche.Context;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace noche.Repository
@@ -11,10 +13,7 @@ namespace noche.Repository
     public interface IUsers
     {
         Users Authsignin(Users users);
-
         Task<Users> Signin(Users users);
-
-
         Task<int> Delete(string id);
         Task<Users> Update(Users values);
         Task<Users> Read(string id);
@@ -70,7 +69,7 @@ namespace noche.Repository
         }
     }
 
-    public class UsersRepository : IUsers
+    public class UsersRepository :   IUsers
     {
         private readonly MongoContext _context = null;
         private readonly IOptions<Nochesettings> _mongosettings;
@@ -82,6 +81,9 @@ namespace noche.Repository
             _context = new MongoContext(settings);
 
         }
+
+        
+
 
         public Users Authsignin(Users users)
         {
@@ -150,7 +152,8 @@ namespace noche.Repository
         {
             try
             {
-                return await _context.Users.Find(x => x.Id == id).FirstAsync<Users>();
+                //return await _context.Users.Find(x => x.Id == id).FirstAsync<Users>();
+                return (Users)await _context.Users.FindAsync<Users>(id);
             }
             catch (Exception ex)
             {
@@ -180,7 +183,36 @@ namespace noche.Repository
         }
     }
 
+    public class UsersExists : ValidationAttribute
+    {
+        private readonly IMongoDatabase _db = null;
+        private readonly MongoContext _context = null;
+        private MongoClient client { get; set; }
+        private IConfiguration Configuration { get; }
 
 
+        public UsersExists()
+        {
+            // var _mongosettings = Configuration.GetSection("Nochesettings");
+            this. client = new MongoClient("mongodb+srv://stbndev:develop3r@cluster0-pd5jd.gcp.mongodb.net/test?retryWrites=true&w=majority");
+            _db = client.GetDatabase("mrgvndb");
+        }
+
+        public override bool IsValid(object value)
+        {
+            bool flag = false;
+            try
+            {
+                var user = _db.GetCollection<Users>("users").Find(x => x.Id == value.ToString()).FirstOrDefault();
+                if (user.idcstatus == 1)
+                    flag = true;
+            }
+            catch (Exception ex)
+            {
+                flag= false;
+            }
+            return flag;
+        }
+    }
 
 }

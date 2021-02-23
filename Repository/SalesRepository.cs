@@ -6,7 +6,10 @@ using noche.Context;
 using noche.Config;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using System.Threading;
+using System.ComponentModel.DataAnnotations;
 
 namespace noche.Repository
 {
@@ -37,32 +40,42 @@ namespace noche.Repository
 
         public async Task<int> Create(Sales values)
         {
-            decimal total = 0;
-            try
+            string id = string.Empty;
+            using (var session = _context.client.StartSession())
             {
-
-                int sequence_value = _context.SalesNext();
-                values.idsales = ++sequence_value;
-                values.idcstatus = (int)CSTATUS.ACTIVO;
-                values.date_add = int.Parse(Util.ConvertToTimestamp());
-
-                foreach (var item in values.details)
+                session.StartTransaction();
+                try
                 {
-                    var product = await _productRepository.Read(item.idproducts.ToString());
-                    product.existence = product.existence - item.quantity;
-                    var subtotal = item.unitary_price * item.quantity;
-                    total += subtotal;
-                    item.unitary_cost = product.unitary_cost;
-                    await _productRepository.Update(product);
-                }
+                    int sequence_value = _context.SalesNext();
+                    values.idsales = ++sequence_value;
+                    values.idcstatus = (int)CSTATUS.ACTIVO;
+                    values.date_add = int.Parse(Util.ConvertToTimestamp());
+                    values.total = values.details.Sum(x => x.quantity * x.unitary_price);
 
-                values.total = total;
-                _context.Sales.InsertOneAsync(values).Wait();
-                return 1;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
+                    foreach (var item in values.details)
+                    {
+                        var product = await _productRepository.Read(item.idproducts.ToString());
+                        product.existence = product.existence - item.quantity;
+                        if (product.existence <= 0)
+                            throw new Exception(String.Format("* Producto sin inventario; detalles: {0}", product.name));
+
+                        values.total = values.details.Sum(x => x.quantity * item.unitary_price);
+
+                        item.unitary_cost = product.unitary_cost;
+                        await _productRepository.Update(product);
+                    }
+                    _context.Sales.InsertOneAsync(values).Wait();
+                    id = values.Id;
+                    session.CommitTransaction();
+                    return 1;
+                }
+                catch (Exception ex)
+                {
+                    session.AbortTransaction();
+                    return -1;
+                    throw new Exception(" *Error  al momento de incertar " + ex.Message);
+
+                }
             }
         }
 
@@ -161,7 +174,7 @@ namespace noche.Repository
                     }
                 }
 
-                
+
                 int ds = int.Parse(Util.ConvertToTimestamp());
                 var update = Builders<Sales>.Update
                 .Set(x => x.date_set, ds)
@@ -182,4 +195,6 @@ namespace noche.Repository
             }
         }
     }
+
+
 }

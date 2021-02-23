@@ -26,9 +26,9 @@ namespace noche.Repository
 
         [BsonDefaultValue(0)]
         public int date_add { get; set; }
+
         [BsonDefaultValue(0)]
         public int date_set { get; set; }
-        
         
     }
     public class MongoDbRepository<T> where T : EntityBase

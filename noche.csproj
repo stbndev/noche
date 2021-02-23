@@ -6,8 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dropbox.Api" Version="4.9.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.5" />
+    <PackageReference Include="Dropbox.Api" Version="6.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />
@@ -16,9 +15,16 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
-    <PackageReference Include="mongocsharpdriver" Version="2.10.2" />
-    <PackageReference Include="MongoDB.Driver" Version="2.10.2" />
+    <PackageReference Include="mongocsharpdriver" Version="2.11.6" />
+    <PackageReference Include="MongoDB.Driver.Core" Version="2.11.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.12" />
   </ItemGroup>
 
 
+  <ItemGroup>
+    <Folder Include="Filters\" />
+    <Folder Include="Request\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Helpers\Validations\" />
+  </ItemGroup>
 </Project>

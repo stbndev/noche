@@ -11,7 +11,5 @@ namespace noche.Config
         public string DatabaseName { get; set; }
         public string dbxfolder { get; set; }
         public string dbxcredentials { get; set; }
-
-
     }
 }

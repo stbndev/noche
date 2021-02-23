@@ -1,14 +1,12 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using noche.Repository;
 
 namespace noche.Context
 {
-    public class Users
+    public class Users : EntityBase
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
-
+        
         [BsonRequired]
         [BsonRepresentation(BsonType.String)]
         public string name { get; set; }
@@ -24,12 +22,7 @@ namespace noche.Context
         [BsonRequired]
         [BsonRepresentation(BsonType.String)]
         public string idrol { get; set; }
-
-        [BsonDefaultValue(0)]
-        public int date_add { get; set; }
-
-        public Companies company { get; set; }
-
+        
     }
 
 

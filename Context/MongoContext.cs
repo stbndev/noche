@@ -15,16 +15,16 @@ namespace noche.Context
     {
         private readonly IMongoDatabase _db = null;
         private readonly IOptions<Nochesettings> _mongosettings;
+        public MongoClient client { get; set; }
 
         public MongoContext(IOptions<Nochesettings> settings)
         {
 
             _mongosettings = settings;
 
-            var client = new MongoClient(_mongosettings.Value.ConnectionString);
+            this. client = new MongoClient(_mongosettings.Value.ConnectionString);
             if (client != null)
                 _db = client.GetDatabase(_mongosettings.Value.DatabaseName);
-
         }
 
         public IMongoCollection<Users> Users
@@ -98,7 +98,7 @@ namespace noche.Context
                     throw ex;
             }
         }
-        
+
         public IMongoCollection<Products> Products
         {
             get
